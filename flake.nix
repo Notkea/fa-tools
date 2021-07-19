@@ -12,6 +12,9 @@
   flake-utils.lib.eachDefaultSystem (system:
   with import nixpkgs { inherit system; };
   let
+    python = python39;
+    pythonPackages = python39Packages;
+
     pythonDependencies = pythonPackages: with pythonPackages; [
       requests
       ratelimiter
@@ -42,15 +45,15 @@
     devShell = mkShell {
       shellHook = "ipython; exit $?";
       buildInputs = [
-        (python3.withPackages (ps: [ ps.ipython ] ++ pythonDependencies ps))
+        (python.withPackages (ps: [ ps.ipython ] ++ pythonDependencies ps))
       ];
     };
 
     defaultPackage = stdenv.mkDerivation rec {
       name = "fa-scripts";
       src = ./.;
-      nativeBuildInputs = [ python3Packages.wrapPython ];
-      propagatedBuildInputs = pythonDependencies python3Packages;
+      nativeBuildInputs = [ pythonPackages.wrapPython ];
+      propagatedBuildInputs = pythonDependencies pythonPackages;
       installPhase = "install -Dt $out/bin *.py";
       postFixup = "wrapPythonPrograms";
     };
