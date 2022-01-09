@@ -63,6 +63,7 @@
     apps = exposeScripts [
       "list-submissions"
       "download-ebook"
+      "get-submission"
     ];
   });
 }
