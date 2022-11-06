@@ -36,7 +36,7 @@
 
     exposeScripts = with lib; flip genAttrs (name: {
       type = "app";
-      program = "${self.defaultPackage.${system}}/bin/${name}.py";
+      program = "${self.packages.${system}.default}/bin/${name}.py";
     });
 
   in {
@@ -49,7 +49,7 @@
       ];
     };
 
-    defaultPackage = stdenv.mkDerivation rec {
+    packages.default = stdenv.mkDerivation rec {
       name = "fa-scripts";
       src = ./.;
       nativeBuildInputs = [ pythonPackages.wrapPython ];
