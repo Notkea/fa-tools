@@ -22,10 +22,10 @@
       html5lib
       (buildPythonPackage rec {
         pname = "markdownify";
-        version = "0.9.2";
+        version = "0.11.6";
         src = fetchPypi {
           inherit pname version;
-          sha256 = "sha256-uXWWiZVf1Wzfhs+WLSi1FkQ3IMOTR5FdvZoMN3n7130=";
+          sha256 = "sha256-AJskDgyfTI6vHQhWJdzUAR4S8PjOxV3t+epvdlXkm/4=";
         };
         buildInputs = [ flake8 ];
         propagatedBuildInputs = [ beautifulsoup4 six ];
