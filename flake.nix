@@ -10,7 +10,7 @@
 
   outputs = { self, nixpkgs, flake-utils }:
   flake-utils.lib.eachDefaultSystem (system:
-  with import nixpkgs { inherit system; };
+  with nixpkgs.legacyPackages.${system};
   let
     python = python39;
     pythonPackages = python39Packages;
