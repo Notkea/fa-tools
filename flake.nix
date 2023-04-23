@@ -1,10 +1,10 @@
 # File part of fa-scripts
-# Copyright 2021 Notkea
+# Copyright 2023 Notkea
 # Licensed under the EUPL version 1.2
 
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -12,26 +12,15 @@
   flake-utils.lib.eachDefaultSystem (system:
   with nixpkgs.legacyPackages.${system};
   let
-    python = python39;
-    pythonPackages = python39Packages;
+    python = python3;
+    pythonPackages = python3Packages;
 
     pythonDependencies = pythonPackages: with pythonPackages; [
       requests
       ratelimiter
       beautifulsoup4
       html5lib
-      (buildPythonPackage rec {
-        pname = "markdownify";
-        version = "0.11.6";
-        src = fetchPypi {
-          inherit pname version;
-          sha256 = "sha256-AJskDgyfTI6vHQhWJdzUAR4S8PjOxV3t+epvdlXkm/4=";
-        };
-        buildInputs = [ flake8 ];
-        propagatedBuildInputs = [ beautifulsoup4 six ];
-        checkInputs = [ pytest ];
-        pythonImportsCheck = [ pname ];
-      })
+      markdownify
     ];
 
     exposeScripts = with lib; flip genAttrs (name: {
