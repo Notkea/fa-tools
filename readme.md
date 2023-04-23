@@ -76,7 +76,7 @@ Script list:
   Fields: title, rating, type, url, thumbnail_url, folder_name, folder_url.
 
 `download-ebook.py <submission-url>`
-: Gets either a text store submission or the description to generate an ebook.
+: Gets either a text story submission or the description to generate an ebook.
   Adds the title, author, submission date, URL, tags and folders to the export.
   The Markdown output can then be fed to `pandoc` to generate an `.epub`.
 
