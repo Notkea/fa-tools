@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # File part of fa-scripts
-# Copyright 2022 Notkea
+# Copyright 2023 Notkea
 # Licensed under the EUPL version 1.2
 
 from _utils import get, qualify
@@ -27,16 +27,20 @@ def extract_folders_links(page):
   if folders_container is None: return []
   return folders_container.find_all('span')
 
+def extract_tags(page):
+  tags_container = page.find(class_='tags-row')
+  if tags_container is None: return []
+  return [ a.text for a in tags_container.find_all('a') ]
+
 def extract_submission_metadata(page, url):
   meta_container = page.find(class_='submission-id-sub-container')
-  tags_container = page.find(class_='tags-row').find_all('a')
   return SubmissionMetadata(
     url=url,
     download_url=qualify(page.find(class_='download').find('a')['href']),
     title=meta_container.find(class_='submission-title').find('p').text,
     author=meta_container.find('a').find('strong').text,
     date=meta_container.find(class_='popup_date')['title'],
-    tags=[ a.text for a in tags_container ],
+    tags=extract_tags(page),
     folder_names=[ s.text for s in extract_folders_links(page) ],
     description=str(page.find(class_='submission-description')),
     inline_writing_md=extract_raw_inline_writing_md(page),
