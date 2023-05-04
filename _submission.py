@@ -12,8 +12,8 @@ class SubmissionMetadata:
   title: str
   author: str
   date: str
-  tags: list[str]
-  folder_names: list[str]
+  tags: tuple[str]
+  folder_names: tuple[str]
   description_html: str
   inline_writing_html: str
 
@@ -33,13 +33,13 @@ def extract_submission_metadata(page, url):
 
 def extract_folders_links(page):
   folders_container = page.find(class_='folder-list-container')
-  if folders_container is None: return []
-  return folders_container.find_all('span')
+  if folders_container is None: return tuple()
+  return tuple(folders_container.find_all('span'))
 
 def extract_tags(page):
   tags_container = page.find(class_='tags-row')
-  if tags_container is None: return []
-  return [ a.text for a in tags_container.find_all('a') ]
+  if tags_container is None: return tuple()
+  return tuple(a.text for a in tags_container.find_all('a'))
 
 def extract_raw_inline_writing_html(page):
   # Use FA's rendered BBCode and convert it back to MD
