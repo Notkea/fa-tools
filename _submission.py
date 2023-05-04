@@ -14,7 +14,7 @@ class SubmissionMetadata:
   date: str
   tags: list[str]
   folder_names: list[str]
-  description: str
+  description_html: str
   inline_writing_html: str
 
 def extract_submission_metadata(page, url):
@@ -27,7 +27,7 @@ def extract_submission_metadata(page, url):
     date=meta_container.find(class_='popup_date')['title'],
     tags=extract_tags(page),
     folder_names=[ s.text for s in extract_folders_links(page) ],
-    description=str(page.find(class_='submission-description')),
+    description_html=str(page.find(class_='submission-description')),
     inline_writing_html=extract_raw_inline_writing_html(page),
   )
 

@@ -38,7 +38,7 @@ def submission_to_markdown(url):
   metadata = extract_submission_metadata(page, url)
   print(format_pandoc_markdown_headers(metadata))
 
-  content = metadata.inline_writing_html or metadata.description
+  content = metadata.inline_writing_html or metadata.description_html
   print(to_markdown(content))
 
 if __name__ == "__main__":
