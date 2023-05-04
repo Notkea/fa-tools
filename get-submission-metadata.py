@@ -19,7 +19,7 @@ def fetch_submission_metadata(url):
 if __name__ == "__main__":
   if len(argv) != 2 or argv[1] in ('-h', '--help'):
     print('Fetches and prints a JSON object containing the metadata of a submission.')
-    print('Usage: get-submission https://www.furaffinity.net/view/SOME_SUBMISSION/')
+    print('Usage: get-submission-metadata https://www.furaffinity.net/view/SOME_SUBMISSION/')
     exit(1)
 
   fetch_submission_metadata(argv[1])
