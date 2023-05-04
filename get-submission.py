@@ -8,7 +8,6 @@ from _utils import get, qualify
 from sys import argv
 from dataclasses import dataclass, asdict
 from json import dumps
-from markdownify import markdownify
 
 @dataclass(frozen=True)
 class SubmissionMetadata:
@@ -20,7 +19,7 @@ class SubmissionMetadata:
   tags: list[str]
   folder_names: list[str]
   description: str
-  inline_writing_md: str
+  inline_writing_html: str
 
 def extract_folders_links(page):
   folders_container = page.find(class_='folder-list-container')
@@ -43,10 +42,10 @@ def extract_submission_metadata(page, url):
     tags=extract_tags(page),
     folder_names=[ s.text for s in extract_folders_links(page) ],
     description=str(page.find(class_='submission-description')),
-    inline_writing_md=extract_raw_inline_writing_md(page),
+    inline_writing_html=extract_raw_inline_writing_html(page),
   )
 
-def extract_raw_inline_writing_md(page):
+def extract_raw_inline_writing_html(page):
   # Use FA's rendered BBCode and convert it back to MD
   writing_container = page.find(class_='submission-writing')
   if writing_container is None: return None
@@ -54,12 +53,6 @@ def extract_raw_inline_writing_md(page):
   paragraphs = preview.contents[8:]  # skip file info
   if len(paragraphs) <= 1: return None  # no preview, unsupported file type
   return ''.join(str(p) for p in paragraphs)
-
-def sanitise_text(raw):
-  return raw.strip().replace('\xa0', ' ')  # NBSP
-
-def to_markdown(raw):
-  return markdownify(sanitise_text(raw), strip=['img', 'a'])
 
 def fetch_submission_metadata(url):
   page = get(url)
