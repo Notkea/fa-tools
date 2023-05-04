@@ -27,7 +27,7 @@ nix run github:notkea/fa-scripts#list-submissions \
   > subs.csv
 
 for s in (q -d, -H "select distinct(url) from subs.csv where type = 't-text'")
-  nix run github:notkea/fa-scripts#download-ebook $s > (basename $s).md
+  nix run github:notkea/fa-scripts#get-submission-markdown $s > (basename $s).md
   pandoc -i (basename $s).md -o (basename $s).epub
   sleep $FA_COOLDOWN_SEC
 end
