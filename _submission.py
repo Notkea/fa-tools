@@ -42,7 +42,7 @@ def extract_tags(page):
   return tuple(a.text for a in tags_container.find_all('a'))
 
 def extract_raw_inline_writing_html(page):
-  # Use FA's rendered BBCode and convert it back to MD
+  '''FA renders BBCode in text files.'''
   writing_container = page.find(class_='submission-writing')
   if writing_container is None: return None
   preview = writing_container.find('center').find('div')
