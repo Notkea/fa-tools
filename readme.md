@@ -75,6 +75,10 @@ Script list:
   Looks at all folders and in the "scraps" category.
   Fields: title, rating, type, url, thumbnail_url, folder_name, folder_url.
 
+`get-submission-metadata.py <submission-url>`
+: Retrieves metadata about a submission and prints those as a JSON on the
+  standard output.
+
 `get-submission-markdown.py <submission-url>`
 : Gets either a text story submission or the description to generate an ebook.
   Adds the title, author, submission date, URL, tags and folders to the export.
