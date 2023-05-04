@@ -51,7 +51,7 @@
     # Run with: `nix run .#script-name`
     apps = exposeScripts [
       "list-submissions"
-      "download-ebook"
+      "get-submission-markdown"
       "get-submission-metadata"
     ];
   });

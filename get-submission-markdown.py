@@ -44,7 +44,7 @@ def submission_to_markdown(url):
 if __name__ == "__main__":
   if len(argv) != 2 or argv[1] in ('-h', '--help'):
     print('Downloads and generate a pandoc markdown file from a text submission.')
-    print('Usage: download-ebook https://www.furaffinity.net/view/SOME_SUBMISSION/')
+    print('Usage: get-submission-markdown https://www.furaffinity.net/view/SOME_SUBMISSION/')
     exit(1)
 
   submission_to_markdown(argv[1])

@@ -75,7 +75,7 @@ Script list:
   Looks at all folders and in the "scraps" category.
   Fields: title, rating, type, url, thumbnail_url, folder_name, folder_url.
 
-`download-ebook.py <submission-url>`
+`get-submission-markdown.py <submission-url>`
 : Gets either a text story submission or the description to generate an ebook.
   Adds the title, author, submission date, URL, tags and folders to the export.
   The Markdown output can then be fed to `pandoc` to generate an `.epub`.
