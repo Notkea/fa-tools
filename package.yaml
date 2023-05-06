@@ -20,10 +20,20 @@ dependencies:
   - base >= 4.9 && < 5
   - text
   - cmdargs
+  - filepath
+  - bytestring
+  - case-insensitive
+  - http-types
+  - http-client
+  - http-client-tls
+  - http-conduit
+  - conduit
+  - resourcet
 
 default-extensions:
   - OverloadedStrings
   - DeriveDataTypeable
+  - NamedFieldPuns
 
 ghc-options:
   - -Wall
