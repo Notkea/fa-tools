@@ -23,6 +23,9 @@ dependencies:
 default-extensions:
   - OverloadedStrings
 
+ghc-options:
+  - -Wall
+
 library:
   source-dirs: lib
 
