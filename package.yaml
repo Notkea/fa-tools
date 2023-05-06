@@ -19,9 +19,11 @@ extra-source-files:
 dependencies:
   - base >= 4.9 && < 5
   - text
+  - cmdargs
 
 default-extensions:
   - OverloadedStrings
+  - DeriveDataTypeable
 
 ghc-options:
   - -Wall
