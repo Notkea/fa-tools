@@ -23,17 +23,21 @@ dependencies:
   - filepath
   - bytestring
   - case-insensitive
+  - network-uri
   - http-types
   - http-client
   - http-client-tls
   - http-conduit
   - conduit
   - resourcet
+  - data-default
+  - scalpel
 
 default-extensions:
   - OverloadedStrings
   - DeriveDataTypeable
   - NamedFieldPuns
+  - RecordWildCards
 
 ghc-options:
   - -Wall

@@ -2,6 +2,7 @@
 -- Copyright 2023 Notkea
 -- Licensed under the EUPL version 1.2
 
+import qualified Network.URI as URI
 import qualified Network.HTTP.Client as HTTP
 import qualified Network.HTTP.Conduit as HTTPC
 import qualified Data.Text as T
@@ -15,6 +16,7 @@ import Control.Monad.Trans.Resource (runResourceT)
 
 import System.Console.CmdArgs
 import Fa.Client
+import qualified Fa.Listing as FAL
 
 envKeyFaSessionHeaders :: String
 envKeyFaSessionHeaders = "FA_SESSION_HEADERS"
@@ -37,7 +39,9 @@ data Options
       { url :: URL
       , output :: Maybe FilePath
       }
-  | Dummy
+  | List
+      { url :: URL
+      }
   deriving (Show, Data, Typeable)
 
 optionsModes :: Options
@@ -50,7 +54,11 @@ optionsModes = modes
           &= typFile
           &= help "Output file (default: name from URL)"
       }
-  , Dummy
+  , List
+      { url = def
+          &= typ "LIST_PAGE_URL"
+          &= argPos 0
+      }
   ]
   &= summary "A CLI toolbox to download content from FurAffinity."
   &= program "fa-tools"
@@ -76,4 +84,6 @@ run client Download { url, output } = do
     sink (Just path) = C.sinkFile path
     sink Nothing = C.sinkFile $ takeBaseName url
 
-run _ Dummy = return ()
+run client List { url } = do
+  let Just uri = URI.parseURI url
+  FAL.scrapListingDataMultiPage client uri >>= print

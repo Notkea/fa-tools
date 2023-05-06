@@ -7,11 +7,13 @@ module Fa.Client where
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import qualified Data.CaseInsensitive as CI
+import qualified Network.URI as U
 import qualified Network.HTTP.Client as HTTP
 import qualified Network.HTTP.Client.TLS as HTTP
 import qualified Network.HTTP.Types.Header as HTTP
 
 import Control.Arrow ((>>>))
+import Data.Functor ((<&>))
 import Data.Maybe (mapMaybe)
 
 type RequestModifier = HTTP.Request -> IO HTTP.Request
@@ -43,3 +45,10 @@ parseHeaderLines = T.lines >>> map (T.splitOn ": ") >>> mapMaybe toHeader
     toHeader :: [T.Text] -> Maybe HTTP.Header
     toHeader [key, val] = Just (CI.mk $ T.encodeUtf8 key, T.encodeUtf8 val)
     toHeader _ = Nothing
+
+canonicaliseUri :: U.URI -> T.Text -> Maybe U.URI
+canonicaliseUri baseUri relativeRef =
+  U.parseRelativeReference (T.unpack relativeRef) <&> (`U.relativeTo` baseUri)
+
+uriString :: U.URI -> String
+uriString = flip (U.uriToString id) ""
