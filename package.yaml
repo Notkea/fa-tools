@@ -32,10 +32,13 @@ dependencies:
   - resourcet
   - data-default
   - scalpel
+  - cassava
 
 default-extensions:
   - OverloadedStrings
   - DeriveDataTypeable
+  - DeriveGeneric
+  - DeriveAnyClass
   - NamedFieldPuns
   - RecordWildCards
 

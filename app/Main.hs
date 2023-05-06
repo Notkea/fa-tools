@@ -7,8 +7,11 @@ import qualified Network.HTTP.Client as HTTP
 import qualified Network.HTTP.Conduit as HTTPC
 import qualified Data.Text as T
 import qualified Conduit as C
+import qualified Data.ByteString.Lazy.Char8 as LB
+import qualified Data.Csv as CSV
 
 import Conduit ((.|))
+import Data.Functor ((<&>))
 import Data.ByteString (ByteString)
 import System.Environment (getEnv)
 import System.FilePath.Posix (takeBaseName)
@@ -86,4 +89,7 @@ run client Download { url, output } = do
 
 run client List { url } = do
   let Just uri = URI.parseURI url
-  FAL.scrapListingDataMultiPage client uri >>= print
+  FAL.scrapListingDataMultiPage client uri
+    <&> concatMap FAL.submissions
+    <&> CSV.encodeDefaultOrderedByName
+    >>= LB.putStrLn

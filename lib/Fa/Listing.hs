@@ -6,13 +6,19 @@ module Fa.Listing where
 
 import qualified Network.HTTP.Client as HTTP
 import qualified Data.Text as T
+import qualified Data.Csv as CSV
 
 import Text.HTML.Scalpel as S
 
+import GHC.Generics (Generic)
 import Network.URI (URI)
 import Data.Functor ((<&>))
 import Data.Default (def)
 import Fa.Client (canonicaliseUri, uriString)
+
+-- TODO: use a distinct enriched type for URI
+instance CSV.ToField URI where
+  toField = CSV.toField . uriString
 
 data SubmissionEntry = SubmissionEntry
   { page :: URI
@@ -20,7 +26,7 @@ data SubmissionEntry = SubmissionEntry
   , title :: T.Text
   , entryType :: T.Text
   , rating :: T.Text
-  } deriving (Show)
+  } deriving (Generic, Show, CSV.ToNamedRecord, CSV.DefaultOrdered)
 
 data FolderEntry = FolderEntry
   { name :: T.Text
