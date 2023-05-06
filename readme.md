@@ -1,10 +1,30 @@
-FurAffinity scripts
-===================
+FurAffinity tools
+=================
 
-A collection of quick and dirty scripts to download content from FurAffinity.
+A collection of quick and dirty tools to download content from FurAffinity.
 
 Note that the programs are intended for personal use.
 Mass scrapping requires an explicit authorisation from the staff of the website.
+
+
+Development
+-----------
+
+```fish
+# Enter the nix development shell with all the tools made available
+nix develop
+
+# Generate the cabal project file from the hpack package.yaml
+hpack
+
+# Build using Cabal
+cabal build
+
+# The library documentation can be accessed and searched through Hoogle
+hoogle serve --local
+
+# An editor using the LSP haskell-language-server should recognised everything
+```
 
 
 Overview
@@ -88,7 +108,7 @@ Script list:
 Licence and copyright
 ---------------------
 
-Copyright (C) 2021 Notkea.
+Copyright (C) 2021-2023 Notkea.
 
-_fa-scripts_ is distributed under the terms of European Union Public Licence
+_fa-tools_ is distributed under the terms of European Union Public Licence
 version 1.2, a copy of which is provided in `licence.txt`.

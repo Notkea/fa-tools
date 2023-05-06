@@ -1,58 +1,54 @@
-# File part of fa-scripts
+# File part of fa-tools
 # Copyright 2023 Notkea
 # Licensed under the EUPL version 1.2
 
 {
+  description = "A collection of tools to download content from FurAffinity.";
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
     flake-utils.url = "github:numtide/flake-utils";
+    flaky-utils.url = "git+https://cgit.pacien.net/libs/flaky-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-  flake-utils.lib.eachDefaultSystem (system:
-  with nixpkgs.legacyPackages.${system};
-  let
-    python = python3;
-    pythonPackages = python3Packages;
-
-    pythonDependencies = pythonPackages: with pythonPackages; [
-      requests
-      ratelimiter
-      beautifulsoup4
-      html5lib
-      markdownify
+  outputs = { self, nixpkgs, flake-utils, flaky-utils }:
+  flake-utils.lib.eachDefaultSystem (system: let
+    pkgs = import nixpkgs { inherit system; };
+    cabalDeps = drv: with pkgs.lib; concatLists (attrValues drv.getCabalDeps);
+    extraPathDeps = with pkgs; [
     ];
 
-    exposeScripts = with lib; flip genAttrs (name: {
-      type = "app";
-      program = "${self.packages.${system}.default}/bin/${name}.py";
-    });
-
-  in {
-    # IPython development shell
-    # Run with: `nix develop`
-    devShell = mkShell {
-      shellHook = "ipython; exit $?";
-      buildInputs = [
-        (python.withPackages (ps: [ ps.ipython ] ++ pythonDependencies ps))
-      ];
+  in rec {
+    apps.default = flake-utils.lib.mkApp {
+      drv = packages.default;
     };
 
-    packages.default = stdenv.mkDerivation rec {
-      name = "fa-scripts";
-      src = ./.;
-      nativeBuildInputs = [ pythonPackages.wrapPython ];
-      propagatedBuildInputs = pythonDependencies pythonPackages;
-      installPhase = "install -Dt $out/bin *.py";
-      postFixup = "wrapPythonPrograms";
-    };
+    packages.default = pkgs.haskell.lib.compose.overrideCabal (super: {
+      buildTools = (super.buildTools or []) ++ (with pkgs; [
+        makeWrapper
+      ]);
 
-    # Runnable scripts
-    # Run with: `nix run .#script-name`
-    apps = exposeScripts [
-      "list-submissions"
-      "get-submission-markdown"
-      "get-submission-metadata"
-    ];
+      postInstall = ''
+        ${super.postInstall or ""}
+
+        # wrapper for runtime dependencies registration
+        wrapProgram "$out/bin/${super.pname}" \
+          --prefix PATH : ${pkgs.lib.makeBinPath extraPathDeps}
+
+        # bash completion
+        mkdir -p "$out/share/bash-completion/completions"
+        "$out/bin/${super.pname}" --help=bash \
+          > "$out/share/bash-completion/completions/${super.pname}"
+      '';
+    }) (pkgs.haskellPackages.callCabal2nix "fa-tools" ./. { });
+
+    devShells.default = flaky-utils.lib.mkDevShell {
+      inherit pkgs;
+      tools = with pkgs; [
+        (haskellPackages.ghcWithHoogle (ps: with ps; [
+          cabal-install
+        ] ++ (cabalDeps packages.default)))
+      ] ++ extraPathDeps;
+    };
   });
 }
