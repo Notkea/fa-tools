@@ -47,6 +47,8 @@
       tools = with pkgs; [
         (haskellPackages.ghcWithHoogle (ps: with ps; [
           cabal-install
+          hlint
+          apply-refact
         ] ++ (cabalDeps packages.default)))
       ] ++ extraPathDeps;
     };
