@@ -20,7 +20,6 @@ import Data.Default (def)
 import Data.Maybe (mapMaybe)
 import Data.ByteString (ByteString)
 import Control.Monad.Trans.Resource (runResourceT)
-import System.FilePath.Posix (takeBaseName)
 
 import Fa.Uri
 
@@ -80,4 +79,4 @@ downloadStream client uri sink = do
 sinkFor :: U.URI -> Maybe FilePath -> ByteSink
 sinkFor _ (Just "-") = C.stdoutC
 sinkFor _ (Just path) = C.sinkFile path
-sinkFor uri Nothing = C.sinkFile $ takeBaseName $ uriString uri
+sinkFor uri Nothing = C.sinkFile $ uriBaseName uri

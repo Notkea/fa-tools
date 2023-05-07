@@ -9,6 +9,7 @@ import qualified Network.URI as U
 import qualified Data.Csv as CSV
 
 import Data.Aeson (ToJSON, toJSON)
+import System.FilePath.Posix (takeBaseName)
 
 instance CSV.ToField U.URI where
   toField = CSV.toField . uriString
@@ -22,3 +23,6 @@ canonicaliseUri baseUri relativeRef =
 
 uriString :: U.URI -> String
 uriString = flip (U.uriToString id) ""
+
+uriBaseName :: U.URI -> FilePath
+uriBaseName = takeBaseName . U.uriPath
