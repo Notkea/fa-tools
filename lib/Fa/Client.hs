@@ -14,21 +14,15 @@ import qualified Network.HTTP.Types.Header as HTTP
 import qualified Network.HTTP.Conduit as HTTPC
 import qualified Conduit as C
 import qualified Text.HTML.Scalpel as S
-import qualified Data.Csv as CSV
 
 import Control.Arrow ((>>>))
 import Data.Default (def)
 import Data.Maybe (mapMaybe)
-import Data.Aeson (ToJSON, toJSON)
 import Data.ByteString (ByteString)
 import Control.Monad.Trans.Resource (runResourceT)
 import System.FilePath.Posix (takeBaseName)
 
-instance CSV.ToField U.URI where
-  toField = CSV.toField . uriString
-
-instance ToJSON U.URI where
-  toJSON = toJSON . uriString
+import Fa.Uri
 
 type RequestModifier = HTTP.Request -> IO HTTP.Request
 
@@ -65,13 +59,6 @@ fetchAndScrape client = flip (S.scrapeURLWithConfig scalpelCfg . uriString)
   where
     scalpelCfg :: S.Config T.Text
     scalpelCfg = def { S.manager = Just client }
-
-canonicaliseUri :: U.URI -> T.Text -> Maybe U.URI
-canonicaliseUri baseUri relativeRef =
-  (`U.relativeTo` baseUri) <$> U.parseRelativeReference (T.unpack relativeRef)
-
-uriString :: U.URI -> String
-uriString = flip (U.uriToString id) ""
 
 infixl 6 @.
 (@.) :: S.TagName -> String -> S.Selector

@@ -14,7 +14,8 @@ import Data.Aeson (ToJSON)
 import Network.URI (URI)
 import Data.Functor ((<&>))
 import Fa.Folder (FolderEntry (..))
-import Fa.Client ((@.), canonicaliseUri, fetchAndScrape)
+import Fa.Client ((@.), fetchAndScrape)
+import Fa.Uri (canonicaliseUri)
 
 type HTML = T.Text
 

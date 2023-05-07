@@ -9,7 +9,7 @@ import qualified Data.Text as T
 import GHC.Generics (Generic)
 import Data.Aeson (ToJSON)
 import Network.URI (URI)
-import Fa.Client ()
+import Fa.Uri ()
 
 data FolderEntry = FolderEntry
   { name :: T.Text

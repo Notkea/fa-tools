@@ -13,7 +13,8 @@ import Text.HTML.Scalpel as S
 import GHC.Generics (Generic)
 import Network.URI (URI)
 import Data.Functor ((<&>))
-import Fa.Client ((@.), (@#), canonicaliseUri, fetchAndScrape)
+import Fa.Client ((@.), (@#), fetchAndScrape)
+import Fa.Uri (canonicaliseUri)
 import Fa.Folder (FolderEntry (..))
 
 data SubmissionEntry = SubmissionEntry
