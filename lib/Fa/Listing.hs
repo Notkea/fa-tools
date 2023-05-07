@@ -13,8 +13,7 @@ import Text.HTML.Scalpel as S
 import GHC.Generics (Generic)
 import Network.URI (URI)
 import Data.Functor ((<&>))
-import Data.Default (def)
-import Fa.Client (canonicaliseUri, uriString)
+import Fa.Client (canonicaliseUri, uriString, fetchAndScrape)
 
 -- TODO: use a distinct enriched type for URI
 instance CSV.ToField URI where
@@ -75,15 +74,9 @@ scrapeListingDataMultiPage client uri = do
   Just currentPageData <- scrapePage uri
   nextPagesData <- scrapNextPage (nextPage currentPageData)
   return $ currentPageData : nextPagesData
-
   where
-    fetchAndScrape :: Scraper T.Text a -> URL -> IO (Maybe a)
-    fetchAndScrape =
-      flip $ scrapeURLWithConfig (def { S.manager = Just client })
-
     scrapePage :: URI -> IO (Maybe ListingPageData)
-    scrapePage page =
-      fetchAndScrape (extractListingPageData page) (uriString page)
+    scrapePage page = fetchAndScrape client (extractListingPageData page) page
 
     scrapNextPage :: Maybe URI -> IO [ListingPageData]
     scrapNextPage (Just nextPage) = scrapeListingDataMultiPage client nextPage

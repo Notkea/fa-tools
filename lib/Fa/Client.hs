@@ -11,8 +11,10 @@ import qualified Network.URI as U
 import qualified Network.HTTP.Client as HTTP
 import qualified Network.HTTP.Client.TLS as HTTP
 import qualified Network.HTTP.Types.Header as HTTP
+import qualified Text.HTML.Scalpel as S
 
 import Control.Arrow ((>>>))
+import Data.Default (def)
 import Data.Maybe (mapMaybe)
 
 type RequestModifier = HTTP.Request -> IO HTTP.Request
@@ -44,6 +46,12 @@ parseHeaderLines = T.lines >>> map (T.splitOn ": ") >>> mapMaybe toHeader
     toHeader :: [T.Text] -> Maybe HTTP.Header
     toHeader [key, val] = Just (CI.mk $ T.encodeUtf8 key, T.encodeUtf8 val)
     toHeader _ = Nothing
+
+fetchAndScrape :: HTTP.Manager -> S.Scraper T.Text a -> U.URI -> IO (Maybe a)
+fetchAndScrape client = flip (S.scrapeURLWithConfig scalpelCfg . uriString)
+  where
+    scalpelCfg :: S.Config T.Text
+    scalpelCfg = def { S.manager = Just client }
 
 canonicaliseUri :: U.URI -> T.Text -> Maybe U.URI
 canonicaliseUri baseUri relativeRef =
