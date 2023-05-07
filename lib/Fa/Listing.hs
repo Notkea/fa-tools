@@ -23,9 +23,9 @@ instance CSV.ToField URI where
 data SubmissionEntry = SubmissionEntry
   { page :: URI
   , thumbnail :: URI
-  , title :: T.Text
   , entryType :: T.Text
   , rating :: T.Text
+  , title :: T.Text
   } deriving (Generic, Show, CSV.ToNamedRecord, CSV.DefaultOrdered)
 
 data FolderEntry = FolderEntry
