@@ -17,9 +17,13 @@ import qualified Data.Csv as CSV
 import Control.Arrow ((>>>))
 import Data.Default (def)
 import Data.Maybe (mapMaybe)
+import Data.Aeson (ToJSON, toJSON)
 
 instance CSV.ToField U.URI where
   toField = CSV.toField . uriString
+
+instance ToJSON U.URI where
+  toJSON = toJSON . uriString
 
 type RequestModifier = HTTP.Request -> IO HTTP.Request
 
