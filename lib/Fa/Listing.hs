@@ -70,8 +70,8 @@ extractListingPageData baseUri = do
   nextPage <- extractNextPageUrl baseUri
   return ListingPageData { .. }
 
-scrapListingDataMultiPage :: HTTP.Manager -> URI -> IO [ListingPageData]
-scrapListingDataMultiPage client uri = do
+scrapeListingDataMultiPage :: HTTP.Manager -> URI -> IO [ListingPageData]
+scrapeListingDataMultiPage client uri = do
   Just currentPageData <- scrapePage uri
   nextPagesData <- scrapNextPage (nextPage currentPageData)
   return $ currentPageData : nextPagesData
@@ -86,5 +86,5 @@ scrapListingDataMultiPage client uri = do
       fetchAndScrape (extractListingPageData page) (uriString page)
 
     scrapNextPage :: Maybe URI -> IO [ListingPageData]
-    scrapNextPage (Just nextPage) = scrapListingDataMultiPage client nextPage
+    scrapNextPage (Just nextPage) = scrapeListingDataMultiPage client nextPage
     scrapNextPage Nothing = return []

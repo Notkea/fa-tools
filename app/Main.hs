@@ -101,7 +101,7 @@ run client List { url, allFolders } = do
 
   where
     scrapeFolder :: URI.URI -> IO [FAL.ListingPageData]
-    scrapeFolder = FAL.scrapListingDataMultiPage client
+    scrapeFolder = FAL.scrapeListingDataMultiPage client
 
     scrapeOtherFolders :: [FAL.FolderEntry] -> IO [FAL.ListingPageData]
     scrapeOtherFolders folderEntries | allFolders =
