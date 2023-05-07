@@ -11,7 +11,7 @@ import qualified Data.ByteString.Lazy.Char8 as LB
 import qualified Data.Csv as CSV
 
 import Conduit ((.|))
-import Data.Functor ((<&>))
+import Control.Arrow ((>>>))
 import Data.ByteString (ByteString)
 import System.Environment (getEnv)
 import System.FilePath.Posix (takeBaseName)
@@ -44,6 +44,7 @@ data Options
       }
   | List
       { url :: URL
+      , allFolders :: Bool
       }
   deriving (Show, Data, Typeable)
 
@@ -61,6 +62,11 @@ optionsModes = modes
       { url = def
           &= typ "LIST_PAGE_URL"
           &= argPos 0
+      , allFolders = False
+          &= explicit
+          &= name "a"
+          &= name "all-folders"
+          &= help "List items from all folders (default: false)"
       }
   ]
   &= summary "A CLI toolbox to download content from FurAffinity."
@@ -87,9 +93,23 @@ run client Download { url, output } = do
     sink (Just path) = C.sinkFile path
     sink Nothing = C.sinkFile $ takeBaseName url
 
-run client List { url } = do
+run client List { url, allFolders } = do
   let Just uri = URI.parseURI url
-  FAL.scrapListingDataMultiPage client uri
-    <&> concatMap FAL.submissions
-    <&> CSV.encodeDefaultOrderedByName
-    >>= LB.putStrLn
+  mainFolderPages <- scrapeFolder uri
+  otherFoldersPages <- scrapeOtherFolders $ FAL.folders $ head mainFolderPages
+  printSubmissionsCsv $ mainFolderPages ++ otherFoldersPages
+
+  where
+    scrapeFolder :: URI.URI -> IO [FAL.ListingPageData]
+    scrapeFolder = FAL.scrapListingDataMultiPage client
+
+    scrapeOtherFolders :: [FAL.FolderEntry] -> IO [FAL.ListingPageData]
+    scrapeOtherFolders folderEntries | allFolders =
+      concat <$> mapM (scrapeFolder . FAL.url) folderEntries
+    scrapeOtherFolders _ = return []
+
+    printSubmissionsCsv :: [FAL.ListingPageData] -> IO ()
+    printSubmissionsCsv =
+      concatMap FAL.submissions
+      >>> CSV.encodeDefaultOrderedByName
+      >>> LB.putStrLn
