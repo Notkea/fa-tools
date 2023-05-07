@@ -13,11 +13,7 @@ import Text.HTML.Scalpel as S
 import GHC.Generics (Generic)
 import Network.URI (URI)
 import Data.Functor ((<&>))
-import Fa.Client ((@.), (@#), canonicaliseUri, uriString, fetchAndScrape)
-
--- TODO: use a distinct enriched type for URI
-instance CSV.ToField URI where
-  toField = CSV.toField . uriString
+import Fa.Client ((@.), (@#), canonicaliseUri, fetchAndScrape)
 
 data SubmissionEntry = SubmissionEntry
   { page :: URI

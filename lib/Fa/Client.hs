@@ -12,10 +12,14 @@ import qualified Network.HTTP.Client as HTTP
 import qualified Network.HTTP.Client.TLS as HTTP
 import qualified Network.HTTP.Types.Header as HTTP
 import qualified Text.HTML.Scalpel as S
+import qualified Data.Csv as CSV
 
 import Control.Arrow ((>>>))
 import Data.Default (def)
 import Data.Maybe (mapMaybe)
+
+instance CSV.ToField U.URI where
+  toField = CSV.toField . uriString
 
 type RequestModifier = HTTP.Request -> IO HTTP.Request
 
