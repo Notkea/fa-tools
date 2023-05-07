@@ -13,7 +13,6 @@ import qualified Network.HTTP.Client.TLS as HTTP
 import qualified Network.HTTP.Types.Header as HTTP
 
 import Control.Arrow ((>>>))
-import Data.Functor ((<&>))
 import Data.Maybe (mapMaybe)
 
 type RequestModifier = HTTP.Request -> IO HTTP.Request
@@ -48,7 +47,7 @@ parseHeaderLines = T.lines >>> map (T.splitOn ": ") >>> mapMaybe toHeader
 
 canonicaliseUri :: U.URI -> T.Text -> Maybe U.URI
 canonicaliseUri baseUri relativeRef =
-  U.parseRelativeReference (T.unpack relativeRef) <&> (`U.relativeTo` baseUri)
+  (`U.relativeTo` baseUri) <$> U.parseRelativeReference (T.unpack relativeRef)
 
 uriString :: U.URI -> String
 uriString = flip (U.uriToString id) ""
