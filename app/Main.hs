@@ -9,6 +9,7 @@ import qualified Data.Text as T
 import qualified Conduit as C
 import qualified Data.ByteString.Lazy.Char8 as LB
 import qualified Data.Csv as CSV
+import qualified Data.Aeson as JSON
 
 import Conduit ((.|))
 import Control.Arrow ((>>>))
@@ -21,6 +22,7 @@ import System.Console.CmdArgs
 import Fa.Client
 import qualified Fa.Folder as FAF
 import qualified Fa.Listing as FAL
+import qualified Fa.Submission as FAS
 
 envKeyFaSessionHeaders :: String
 envKeyFaSessionHeaders = "FA_SESSION_HEADERS"
@@ -47,6 +49,9 @@ data Options
       { url :: URL
       , allFolders :: Bool
       }
+  | Info
+      { url :: URL
+      }
   deriving (Show, Data, Typeable)
 
 optionsModes :: Options
@@ -69,6 +74,11 @@ optionsModes = modes
           &= name "all-folders"
           &= help "List items from all folders (default: false)"
       }
+  , Info
+      { url = def
+          &= typ "SUBMISSION_PAGE_URL"
+          &= argPos 0
+      }
   ]
   &= summary "A CLI toolbox to download content from FurAffinity."
   &= program "fa-tools"
@@ -83,6 +93,8 @@ main = do
   run client arguments
 
 run :: HTTP.Manager -> Options -> IO ()
+
+-- TODO: automatically follow download link if url is a submission page
 run client Download { url, output } = do
   request <- HTTP.parseRequest url
   runResourceT $ do
@@ -118,3 +130,8 @@ run client List { url, allFolders } = do
       concatMap FAL.submissions
       >>> CSV.encodeDefaultOrderedByName
       >>> LB.putStrLn
+
+run client Info { url } = do
+  let Just uri = URI.parseURI url
+  Just info <- FAS.scrapeSubmission client uri
+  LB.putStrLn $ JSON.encode info

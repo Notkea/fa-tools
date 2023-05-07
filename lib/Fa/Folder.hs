@@ -6,9 +6,12 @@ module Fa.Folder where
 
 import qualified Data.Text as T
 
+import GHC.Generics (Generic)
+import Data.Aeson (ToJSON)
 import Network.URI (URI)
+import Fa.Client ()
 
 data FolderEntry = FolderEntry
   { name :: T.Text
   , url :: URI
-  } deriving (Show)
+  } deriving (Generic, Show, ToJSON)
