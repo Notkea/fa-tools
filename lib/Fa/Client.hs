@@ -79,4 +79,4 @@ downloadStream client uri sink = do
 sinkFor :: U.URI -> Maybe FilePath -> ByteSink
 sinkFor _ (Just "-") = C.stdoutC
 sinkFor _ (Just path) = C.sinkFile path
-sinkFor uri Nothing = C.sinkFile $ uriBaseName uri
+sinkFor uri Nothing = C.sinkFile $ uriFileName uri
