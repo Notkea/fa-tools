@@ -4,19 +4,13 @@
 
 import qualified Network.URI as URI
 import qualified Network.HTTP.Client as HTTP
-import qualified Network.HTTP.Conduit as HTTPC
 import qualified Data.Text as T
-import qualified Conduit as C
 import qualified Data.ByteString.Lazy.Char8 as LB
 import qualified Data.Csv as CSV
 import qualified Data.Aeson as JSON
 
-import Conduit ((.|))
 import Control.Arrow ((>>>))
-import Data.ByteString (ByteString)
 import System.Environment (getEnv)
-import System.FilePath.Posix (takeBaseName)
-import Control.Monad.Trans.Resource (runResourceT)
 
 import System.Console.CmdArgs
 import Fa.Client
@@ -96,15 +90,8 @@ run :: HTTP.Manager -> Options -> IO ()
 
 -- TODO: automatically follow download link if url is a submission page
 run client Download { url, output } = do
-  request <- HTTP.parseRequest url
-  runResourceT $ do
-    response <- HTTPC.http request client
-    C.runConduit $ HTTPC.responseBody response .| sink output
-  where
-    sink :: C.MonadResource m => Maybe FilePath -> C.ConduitT ByteString o m ()
-    sink (Just "-") = C.stdoutC
-    sink (Just path) = C.sinkFile path
-    sink Nothing = C.sinkFile $ takeBaseName url
+  let Just uri = URI.parseURI url
+  downloadStream client uri $ sinkFor uri output
 
 -- TODO: proper exit code (page not existing, etc)
 -- TODO: rate-limit when scrapeing many pages?

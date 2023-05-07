@@ -11,6 +11,8 @@ import qualified Network.URI as U
 import qualified Network.HTTP.Client as HTTP
 import qualified Network.HTTP.Client.TLS as HTTP
 import qualified Network.HTTP.Types.Header as HTTP
+import qualified Network.HTTP.Conduit as HTTPC
+import qualified Conduit as C
 import qualified Text.HTML.Scalpel as S
 import qualified Data.Csv as CSV
 
@@ -18,6 +20,9 @@ import Control.Arrow ((>>>))
 import Data.Default (def)
 import Data.Maybe (mapMaybe)
 import Data.Aeson (ToJSON, toJSON)
+import Data.ByteString (ByteString)
+import Control.Monad.Trans.Resource (runResourceT)
+import System.FilePath.Posix (takeBaseName)
 
 instance CSV.ToField U.URI where
   toField = CSV.toField . uriString
@@ -75,3 +80,17 @@ infixl 6 @.
 infixl 6 @#
 (@#) :: S.TagName -> String -> S.Selector
 (@#) tag idName = tag S.@: ["id" S.@= idName]
+
+type ByteSink = C.ConduitT ByteString C.Void (C.ResourceT IO) ()
+
+downloadStream :: HTTP.Manager -> U.URI -> ByteSink -> IO ()
+downloadStream client uri sink = do
+  request <- HTTP.parseRequest $ uriString uri
+  runResourceT $ do
+    response <- HTTPC.http request client
+    C.connect (HTTPC.responseBody response) sink
+
+sinkFor :: U.URI -> Maybe FilePath -> ByteSink
+sinkFor _ (Just "-") = C.stdoutC
+sinkFor _ (Just path) = C.sinkFile path
+sinkFor uri Nothing = C.sinkFile $ takeBaseName $ uriString uri
