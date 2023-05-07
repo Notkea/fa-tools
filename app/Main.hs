@@ -93,6 +93,8 @@ run client Download { url, output } = do
     sink (Just path) = C.sinkFile path
     sink Nothing = C.sinkFile $ takeBaseName url
 
+-- TODO: stream output?
+-- TODO: deduplicate output?
 run client List { url, allFolders } = do
   let Just uri = URI.parseURI url
   mainFolderPages <- scrapeFolder uri
