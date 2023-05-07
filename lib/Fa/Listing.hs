@@ -13,7 +13,7 @@ import Text.HTML.Scalpel as S
 import GHC.Generics (Generic)
 import Network.URI (URI)
 import Data.Functor ((<&>))
-import Fa.Client (canonicaliseUri, uriString, fetchAndScrape)
+import Fa.Client ((@.), (@#), canonicaliseUri, uriString, fetchAndScrape)
 
 -- TODO: use a distinct enriched type for URI
 instance CSV.ToField URI where
@@ -40,7 +40,7 @@ data ListingPageData = ListingPageData
 
 extractSubmissionEntries :: URI -> Scraper T.Text [SubmissionEntry]
 extractSubmissionEntries baseUri =
-  chroots ("section" @: ["id" @= "gallery-gallery"] // "figure") $ do
+  chroots ("section" @# "gallery-gallery" // "figure") $ do
     Just page <- attr "href" ("figcaption" // "a") <&> canonicaliseUri baseUri
     Just thumbnail <- attr "src" "img" <&> canonicaliseUri baseUri
     title <- attr "title" ("figcaption" // "a")
@@ -49,7 +49,7 @@ extractSubmissionEntries baseUri =
 
 extractFolderEntries :: URI -> Scraper T.Text [FolderEntry]
 extractFolderEntries baseUri =
-  chroots ("div" @: [hasClass "user-folders"] // "a") $ do
+  chroots ("div" @. "user-folders" // "a") $ do
     name <- text anySelector
     Just url <- attr "href" anySelector <&> canonicaliseUri baseUri
     return FolderEntry { .. }
@@ -57,7 +57,7 @@ extractFolderEntries baseUri =
 extractNextPageUrl :: URI -> Scraper T.Text (Maybe URI)
 extractNextPageUrl baseUri =
   fmap (lookup "Next") $
-    chroots ("div" @: [hasClass "submission-list"] // "form") $ do
+    chroots ("div" @. "submission-list" // "form") $ do
       label <- text "button"
       Just target <- attr "action" "form" <&> canonicaliseUri baseUri
       return (label, target)

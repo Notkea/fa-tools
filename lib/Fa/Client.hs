@@ -59,3 +59,11 @@ canonicaliseUri baseUri relativeRef =
 
 uriString :: U.URI -> String
 uriString = flip (U.uriToString id) ""
+
+infixl 6 @.
+(@.) :: S.TagName -> String -> S.Selector
+(@.) tag className = tag S.@: [S.hasClass className]
+
+infixl 6 @#
+(@#) :: S.TagName -> String -> S.Selector
+(@#) tag idName = tag S.@: ["id" S.@= idName]
