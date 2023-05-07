@@ -8,12 +8,14 @@ import qualified Data.Text as T
 import qualified Data.ByteString.Lazy.Char8 as LB
 import qualified Data.Csv as CSV
 import qualified Data.Aeson as JSON
+import qualified System.IO.Error as IOE
 
 import Control.Arrow ((>>>))
 import System.Environment (getEnv)
 
 import System.Console.CmdArgs
 import Fa.Client
+import Fa.Uri
 import qualified Fa.Folder as FAF
 import qualified Fa.Listing as FAL
 import qualified Fa.Submission as FAS
@@ -52,11 +54,11 @@ optionsModes :: Options
 optionsModes = modes
   [ Download
       { url = def
-          &= typ "FILE_URL"
+          &= typ "SUBMISSION_URL"
           &= argPos 0
       , output = Nothing
           &= typFile
-          &= help "Output file (default: name from URL)"
+          &= help "Output file (default: original name)"
       }
   , List
       { url = def
@@ -88,10 +90,23 @@ main = do
 
 run :: HTTP.Manager -> Options -> IO ()
 
--- TODO: automatically follow download link if url is a submission page
 run client Download { url, output } = do
   let Just uri = URI.parseURI url
-  downloadStream client uri $ sinkFor uri output
+  fileUri <- getFileUri uri
+  downloadStream client fileUri $ sinkFor fileUri output
+  where
+    getFileUri :: URI.URI -> IO URI.URI
+    getFileUri uri = case uriHostName uri of
+      "furaffinity.net" -> getSubmissionUri uri
+      "www.furaffinity.net" -> getSubmissionUri uri
+      "d.furaffinity.net" -> return uri
+      "t.furaffinity.net" -> return uri
+      _ -> IOE.ioError $ IOE.userError "not a known FurAffinity domain"
+
+    getSubmissionUri :: URI.URI -> IO URI.URI
+    getSubmissionUri uri = do
+      Just info <- FAS.scrapeSubmission client uri
+      return $ FAS.download info
 
 -- TODO: proper exit code (page not existing, etc)
 -- TODO: rate-limit when scrapeing many pages?

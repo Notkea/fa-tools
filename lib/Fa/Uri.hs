@@ -26,3 +26,7 @@ uriString = flip (U.uriToString id) ""
 
 uriFileName :: U.URI -> FilePath
 uriFileName = takeFileName . U.uriPath
+
+uriHostName :: U.URI -> String
+uriHostName U.URI { uriAuthority = Just U.URIAuth { uriRegName } } = uriRegName
+uriHostName _ = ""
