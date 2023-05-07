@@ -1,0 +1,38 @@
+name:         fa-tools
+version:      0.1.0.0
+license:      EUPL-1.2
+license-file: licence.txt
+
+category:     Web scraping
+synopsis:     A collection of tools to download content from FurAffinity
+description:  See "readme.md"
+
+author:       Notkea
+copyright:    2023 Notkea
+
+git:          https://github.com/Notkea/fa-tools
+homepage:     https://github.com/Notkea/fa-tools
+
+extra-source-files:
+  - readme.md
+
+dependencies:
+  - base >= 4.9 && < 5
+  - text
+
+default-extensions:
+  - OverloadedStrings
+
+library:
+  source-dirs: lib
+
+executables:
+  fa-tools:
+    main:        Main.hs
+    source-dirs: app
+    dependencies:
+      - fa-tools
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
