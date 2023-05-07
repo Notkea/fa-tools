@@ -94,6 +94,7 @@ run client Download { url, output } = do
     sink Nothing = C.sinkFile $ takeBaseName url
 
 -- TODO: proper exit code (page not existing, etc)
+-- TODO: rate-limit when scrapeing many pages?
 -- TODO: stream output?
 -- TODO: deduplicate output?
 run client List { url, allFolders } = do
