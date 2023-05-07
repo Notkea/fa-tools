@@ -14,6 +14,7 @@ import GHC.Generics (Generic)
 import Network.URI (URI)
 import Data.Functor ((<&>))
 import Fa.Client ((@.), (@#), canonicaliseUri, fetchAndScrape)
+import Fa.Folder (FolderEntry (..))
 
 data SubmissionEntry = SubmissionEntry
   { page :: URI
@@ -22,11 +23,6 @@ data SubmissionEntry = SubmissionEntry
   , rating :: T.Text
   , title :: T.Text
   } deriving (Generic, Show, CSV.ToNamedRecord, CSV.DefaultOrdered)
-
-data FolderEntry = FolderEntry
-  { name :: T.Text
-  , url :: URI
-  } deriving (Show)
 
 data ListingPageData = ListingPageData
   { submissions :: [SubmissionEntry]

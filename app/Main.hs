@@ -19,6 +19,7 @@ import Control.Monad.Trans.Resource (runResourceT)
 
 import System.Console.CmdArgs
 import Fa.Client
+import qualified Fa.Folder as FAF
 import qualified Fa.Listing as FAL
 
 envKeyFaSessionHeaders :: String
@@ -107,9 +108,9 @@ run client List { url, allFolders } = do
     scrapeFolder :: URI.URI -> IO [FAL.ListingPageData]
     scrapeFolder = FAL.scrapeListingDataMultiPage client
 
-    scrapeOtherFolders :: [FAL.FolderEntry] -> IO [FAL.ListingPageData]
+    scrapeOtherFolders :: [FAF.FolderEntry] -> IO [FAL.ListingPageData]
     scrapeOtherFolders folderEntries | allFolders =
-      concat <$> mapM (scrapeFolder . FAL.url) folderEntries
+      concat <$> mapM (scrapeFolder . FAF.url) folderEntries
     scrapeOtherFolders _ = return []
 
     printSubmissionsCsv :: [FAL.ListingPageData] -> IO ()
