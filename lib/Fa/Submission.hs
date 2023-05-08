@@ -50,8 +50,9 @@ extractInlineWriting =
     inlineWritingContainer = "div" @. "submission-writing" // "center" // "div"
 
     wrapUp :: [HTML] -> Maybe HTML
-    wrapUp paragraphs | length paragraphs > 1 = Just (T.concat paragraphs)
-    wrapUp _ = Nothing  -- no preview, unsupported file type
+    wrapUp paragraphs
+      | length paragraphs > 1 = Just (T.concat paragraphs)
+      | otherwise = Nothing  -- no preview, unsupported file type
 
 extractSubmission :: URI -> Scraper T.Text Submission
 extractSubmission page = do

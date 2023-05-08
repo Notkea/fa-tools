@@ -130,9 +130,9 @@ run client List { url, allFolders } = do
     scrapeFolder = FAL.scrapeListingDataMultiPage client
 
     scrapeOtherFolders :: [FAF.FolderEntry] -> IO [FAL.ListingPageData]
-    scrapeOtherFolders folderEntries | allFolders =
-      concat <$> mapM (scrapeFolder . FAF.url) folderEntries
-    scrapeOtherFolders _ = return []
+    scrapeOtherFolders folderEntries
+      | allFolders = concat <$> mapM (scrapeFolder . FAF.url) folderEntries
+      | otherwise = return []
 
     printSubmissionsCsv :: [FAL.ListingPageData] -> IO ()
     printSubmissionsCsv =
