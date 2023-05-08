@@ -50,6 +50,7 @@ optionsModes = modes
           &= typ "SUBMISSION_PAGE_URL"
           &= argPos 0
       }
+      &= help "Retrieve and print a submission's info as JSON."
   , Download
       { url = def
           &= typ "SUBMISSION_URL"
@@ -58,6 +59,7 @@ optionsModes = modes
           &= typFile
           &= help "Output file (default: original name)"
       }
+      &= help "Download a submission file from the given page or direct link."
   , List
       { url = def
           &= typ "LIST_PAGE_URL"
@@ -68,6 +70,7 @@ optionsModes = modes
           &= name "all-folders"
           &= help "List items from all folders (default: false)"
       }
+      &= help "Retrieve and list submissions from a gallery as CSV."
   ]
   &= summary "A CLI toolbox to download content from FurAffinity."
   &= program "fa-tools"
