@@ -47,10 +47,13 @@ filterSessionHeaders = filter (flip notElem excludedHeaders . fst)
       ]
 
 parseHeaderLines :: T.Text -> HTTP.RequestHeaders
-parseHeaderLines = T.lines >>> map (T.splitOn ": ") >>> mapMaybe toHeader
+parseHeaderLines = T.lines >>> map unpackEntry >>> mapMaybe toHeader
   where
-    toHeader :: [T.Text] -> Maybe HTTP.Header
-    toHeader [key, val] = Just (CI.mk $ T.encodeUtf8 key, T.encodeUtf8 val)
+    unpackEntry :: T.Text -> [ByteString]
+    unpackEntry = T.splitOn ":" >>> map (T.encodeUtf8 . T.strip)
+
+    toHeader :: [ByteString] -> Maybe HTTP.Header
+    toHeader [key, val] = Just (CI.mk key, val)
     toHeader _ = Nothing
 
 fetchAndScrape :: HTTP.Manager -> S.Scraper T.Text a -> U.URI -> IO (Maybe a)
