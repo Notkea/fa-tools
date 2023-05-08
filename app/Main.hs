@@ -30,12 +30,12 @@ initHttpManager = do
 type URL = String
 
 data Options
-  = Info
-      { url :: URL
-      }
-  | List
+  = List
       { url :: URL
       , allFolders :: Bool
+      }
+  | Info
+      { url :: URL
       }
   | Download
       { url :: URL
@@ -45,13 +45,7 @@ data Options
 
 optionsModes :: Options
 optionsModes = modes
-  [ Info
-      { url = def
-          &= typ "SUBMISSION_PAGE_URL"
-          &= argPos 0
-      }
-      &= help "Retrieve and print a submission's info as JSON."
-  , List
+  [ List
       { url = def
           &= typ "LIST_PAGE_URL"
           &= argPos 0
@@ -62,6 +56,12 @@ optionsModes = modes
           &= help "List items from all folders (default: false)"
       }
       &= help "Retrieve and list submissions from a gallery as CSV."
+  , Info
+      { url = def
+          &= typ "SUBMISSION_PAGE_URL"
+          &= argPos 0
+      }
+      &= help "Retrieve and print a submission's info as JSON."
   , Download
       { url = def
           &= typ "SUBMISSION_URL"
@@ -72,7 +72,7 @@ optionsModes = modes
       }
       &= help "Download a submission file from the given page or direct link."
   ]
-  &= summary "A CLI toolbox to download content from FurAffinity."
+  &= summary "A CLI toolbox to retrieve content from FurAffinity."
   &= program "fa-tools"
   &= help (unlines envHelp)
   &= helpArg [explicit, name "h", name "help"]
@@ -85,6 +85,6 @@ main = do
   run client arguments
 
 run :: HTTP.Manager -> Options -> IO ()
-run client Info { url } = APP.info client url
 run client List { url, allFolders } = APP.list client url allFolders
+run client Info { url } = APP.info client url
 run client Download { url, output } = APP.download client url output
