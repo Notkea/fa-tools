@@ -39,6 +39,12 @@
         mkdir -p "$out/share/bash-completion/completions"
         "$out/bin/${super.pname}" --help=bash \
           > "$out/share/bash-completion/completions/${super.pname}"
+
+        # manual page
+        mkdir -p "$out/share/man/man1"
+        ${pkgs.pandoc}/bin/pandoc --standalone --to man \
+          readme.md \
+          --output "$out/share/man/man1/fa-tools.1"
       '';
     }) (pkgs.haskellPackages.callCabal2nix "fa-tools" ./. { });
 
@@ -49,6 +55,7 @@
           cabal-install
           hlint
           apply-refact
+          pandoc
         ] ++ (cabalDeps packages.default)))
       ] ++ extraPathDeps;
     };

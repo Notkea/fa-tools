@@ -1,14 +1,102 @@
-FurAffinity tools
-=================
-
-A collection of quick and dirty tools to download content from FurAffinity.
-
-Note that the programs are intended for personal use.
-Mass scrapping requires an explicit authorisation from the staff of the website.
+---
+title: FA-TOOLS(1) fa-tools
+date: 2023-05
+---
 
 
-Development
------------
+# NAME
+
+fa-tools - a CLI toolbox to retrieve content from FurAffinity
+
+
+# NOTES
+
+The program is intended for personal use.
+Mass scrapping requires an explicit authorisation from the staff of the
+website.
+
+FurAffinity does not expose a public API, so the program relies on scrapping
+content from some user browsing session.
+
+The scrapping program assumes that the session uses the "Modern" theme on the
+website.
+
+
+# ENVIRONMENT VARIABLES
+
+`FA_SESSION_HEADERS`
+:   Session headers extracted from an existing authenticated browser session.
+    Given as a dictionary of key and values separated by `: `, one per line.
+    Required.
+
+    Those request headers can be copied from a web browser by opening the
+    "developer tools", going to the "network" tab, then the "request" sub-tab.
+
+
+# COMMANDS
+
+`fa-tools list [OPTIONS] LIST_PAGE_URL`
+:   Retrieve and list submissions from a gallery as CSV.
+
+    Columns are: page, thumbnail, kind, rating, title.
+
+    `-a` `--all-folders`
+    :   List items from all folders (default: false)
+
+`fa-tools info SUBMISSION_PAGE_URL`
+:   Retrieve and print a submission's info as JSON.
+
+    Fields are: page, download, author, date, tags, folders(name, url), title,
+    description, inlineWriting.
+
+`fa-tools download [OPTIONS] SUBMISSION_URL`
+:   Download a submission file from the given page or direct link.
+    Prints the name of the output file once downloaded.
+
+    `-o` `--output=FILE`
+    :   Output file (default: original name)
+
+
+# EXAMPLE
+
+The following snippet lists all the submissions in a gallery folder, download
+all the writings and convert them to EPUB e-book to be read offline on an e-ink
+tablet for example.
+
+Fish shell commands:
+
+```fish
+# Get into a shell with the fa-tools, q and ebook-convert programs
+nix shell github:Notkea/fa-tools "nixpkgs#q-text-as-data" "nixpkgs#calibre"
+
+# Use an existing FA user session, to extract from a web browser
+set --export FA_SESSION_HEADERS "
+User-Agent: [...]
+Cookie: [...]
+[...]
+"
+
+# Retrieve the list of submissions in a gallery folder
+fa-tools list https://www.furaffinity.net/gallery/$SOMEUSER/ > submissions.csv
+
+# Filter the CSV to keep the pages of only the text submissions
+set text_submission_pages (
+  q -d, -H "select distinct(page) from submissions.csv where kind = 't-text'"
+)
+
+# Download each of those submissions and convert each to an EPUB e-book
+for submission_page in $text_submission_pages
+  set downloaded_file (fa-tools download $submission_page)
+  ebook-convert $downloaded_file $downloaded_file.epub --no-default-epub-cover
+end
+```
+
+
+# DEVELOPMENT
+
+The source code is available at <https://github.com/Notkea/fa-tools>.
+
+To start a development environment:
 
 ```fish
 # Enter the nix development shell with all the tools made available
@@ -27,86 +115,7 @@ hoogle serve --local
 ```
 
 
-Overview
---------
-
-The following snippet can be used to export all writings listed in a gallery
-to EPUB e-books. It makes use of:
-
-* `fish` as the shell,
-* `nix run` to run the scripts, taking care of their dependencies,
-* `q` (`q-text-as-data`) to filter the CSV listing with an SQL query,
-* `pandoc` to generate an EPUB e-book from the downloaded Markdown.
-
-```fish
-set --export FA_BROWSER_HEADERS "headers extracted from browser here"
-set --export FA_COOLDOWN_SEC 1
-
-nix run github:notkea/fa-scripts#list-submissions \
-  https://www.furaffinity.net/gallery/FA_USERNAME/ \
-  > subs.csv
-
-for s in (q -d, -H "select distinct(url) from subs.csv where type = 't-text'")
-  nix run github:notkea/fa-scripts#get-submission-markdown $s > (basename $s).md
-  pandoc -i (basename $s).md -o (basename $s).epub
-  sleep $FA_COOLDOWN_SEC
-end
-```
-
-
-Scrapping
----------
-
-FurAffinity does not expose a public API, so the scripts rely on scrapping
-content from some user browsing session.
-
-The scrapping scripts assume that the session uses the "Modern" theme on the
-website.
-
-The following environment variables are recognised and used in the various
-scrapping scripts:
-
-`FA_BROWSER_HEADERS`
-: Headers extracted from an existing authenticated browser session.
-  Given as a dictionary of key and values separated by `: `, one per line.
-
-`FA_COOLDOWN_SEC`
-: Minimum delay between HTTP requests within scripts.
-  Does not affect separate calls of individual scripts.
-  Default: 1 second.
-
-
-Scripts
--------
-
-The scripts are deliberately simple so that they can be used from the shell,
-not just from Python programs or the Python REPL.
-
-Data are exported as comma-separated values (CSV) files between scripts.
-Output is simply written to `stdout`.
-
-This allows easily plugging intermediary manual or automatic steps in a
-download and processing pipeline.
-
-Script list:
-
-`list-submissions.py <gallery-root-url>`
-: List all submissions in a gallery along with their type.
-  Looks at all folders and in the "scraps" category.
-  Fields: title, rating, type, url, thumbnail_url, folder_name, folder_url.
-
-`get-submission-metadata.py <submission-url>`
-: Retrieves metadata about a submission and prints those as a JSON on the
-  standard output.
-
-`get-submission-markdown.py <submission-url>`
-: Gets either a text story submission or the description to generate an ebook.
-  Adds the title, author, submission date, URL, tags and folders to the export.
-  The Markdown output can then be fed to `pandoc` to generate an `.epub`.
-
-
-Licence and copyright
----------------------
+# LICENCE AND COPYRIGHT
 
 Copyright (C) 2021-2023 Notkea.
 
