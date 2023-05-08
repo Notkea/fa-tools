@@ -30,7 +30,10 @@ initHttpManager = do
 type URL = String
 
 data Options
-  = Download
+  = Info
+      { url :: URL
+      }
+  | Download
       { url :: URL
       , output :: Maybe FilePath
       }
@@ -38,14 +41,16 @@ data Options
       { url :: URL
       , allFolders :: Bool
       }
-  | Info
-      { url :: URL
-      }
   deriving (Show, Data, Typeable)
 
 optionsModes :: Options
 optionsModes = modes
-  [ Download
+  [ Info
+      { url = def
+          &= typ "SUBMISSION_PAGE_URL"
+          &= argPos 0
+      }
+  , Download
       { url = def
           &= typ "SUBMISSION_URL"
           &= argPos 0
@@ -63,11 +68,6 @@ optionsModes = modes
           &= name "all-folders"
           &= help "List items from all folders (default: false)"
       }
-  , Info
-      { url = def
-          &= typ "SUBMISSION_PAGE_URL"
-          &= argPos 0
-      }
   ]
   &= summary "A CLI toolbox to download content from FurAffinity."
   &= program "fa-tools"
@@ -82,6 +82,6 @@ main = do
   run client arguments
 
 run :: HTTP.Manager -> Options -> IO ()
+run client Info { url } = APP.info client url
 run client Download { url, output } = APP.download client url output
 run client List { url, allFolders } = APP.list client url allFolders
-run client Info { url } = APP.info client url
