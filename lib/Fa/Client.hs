@@ -76,7 +76,6 @@ downloadStream client uri sink = do
     response <- HTTPC.http request client
     C.connect (HTTPC.responseBody response) sink
 
-sinkFor :: U.URI -> Maybe FilePath -> ByteSink
-sinkFor _ (Just "-") = C.stdoutC
-sinkFor _ (Just path) = C.sinkFile path
-sinkFor uri Nothing = C.sinkFile $ uriFileName uri
+sinkFor :: FilePath -> ByteSink
+sinkFor "-" = C.stdoutC
+sinkFor path = C.sinkFile path

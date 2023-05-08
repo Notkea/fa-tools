@@ -93,7 +93,9 @@ run :: HTTP.Manager -> Options -> IO ()
 run client Download { url, output } = do
   let Just uri = URI.parseURI url
   fileUri <- getFileUri uri
-  downloadStream client fileUri $ sinkFor fileUri output
+  let outputPath = getOutputPath fileUri
+  downloadStream client fileUri $ sinkFor outputPath
+  putStrLn outputPath
   where
     getFileUri :: URI.URI -> IO URI.URI
     getFileUri uri = case uriHostName uri of
@@ -107,6 +109,11 @@ run client Download { url, output } = do
     getSubmissionUri uri = do
       Just info <- FAS.scrapeSubmission client uri
       return $ FAS.download info
+
+    getOutputPath :: URI.URI -> FilePath
+    getOutputPath uri = case output of
+      Just givenName -> givenName
+      Nothing -> uriFileName uri
 
 -- TODO: proper exit code (page not existing, etc)
 -- TODO: rate-limit when scrapeing many pages?
