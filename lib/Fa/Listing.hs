@@ -20,7 +20,7 @@ import Fa.Folder (FolderEntry (..))
 data SubmissionEntry = SubmissionEntry
   { page :: URI
   , thumbnail :: URI
-  , entryType :: T.Text
+  , kind :: T.Text
   , rating :: T.Text
   , title :: T.Text
   } deriving (Generic, Show, CSV.ToNamedRecord, CSV.DefaultOrdered)
@@ -37,7 +37,7 @@ extractSubmissionEntries baseUri =
     Just page <- attr "href" ("figcaption" // "a") <&> canonicaliseUri baseUri
     Just thumbnail <- attr "src" "img" <&> canonicaliseUri baseUri
     title <- attr "title" ("figcaption" // "a")
-    [rating, entryType] <- attr "class" "figure" <&> T.splitOn " "
+    [rating, kind] <- attr "class" "figure" <&> T.splitOn " "
     return SubmissionEntry { .. }
 
 extractFolderEntries :: URI -> Scraper T.Text [FolderEntry]
