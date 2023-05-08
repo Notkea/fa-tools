@@ -115,7 +115,6 @@ run client Download { url, output } = do
       Just givenName -> givenName
       Nothing -> uriFileName uri
 
--- TODO: proper exit code (page not existing, etc)
 -- TODO: rate-limit when scrapeing many pages?
 -- TODO: stream output?
 -- TODO: deduplicate output?
@@ -124,7 +123,6 @@ run client List { url, allFolders } = do
   mainFolderPages <- scrapeFolder uri
   otherFoldersPages <- scrapeOtherFolders $ FAL.folders $ head mainFolderPages
   printSubmissionsCsv $ mainFolderPages ++ otherFoldersPages
-
   where
     scrapeFolder :: URI.URI -> IO [FAL.ListingPageData]
     scrapeFolder = FAL.scrapeListingDataMultiPage client
