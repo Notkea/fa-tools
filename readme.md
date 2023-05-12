@@ -66,8 +66,8 @@ tablet for example.
 Fish shell commands:
 
 ```fish
-# Get into a shell with the fa-tools, q and ebook-convert programs
-nix shell github:Notkea/fa-tools "nixpkgs#q-text-as-data" "nixpkgs#calibre"
+# Get into a shell with the fa-tools, q, jq and ebook-convert programs
+nix shell github:Notkea/fa-tools 'nixpkgs#'{q-text-as-data,jq,calibre}
 
 # Use an existing FA user session, to extract from a web browser
 set --export FA_SESSION_HEADERS "
@@ -84,10 +84,21 @@ set text_submission_pages (
   q -d, -H "select distinct(page) from submissions.csv where kind = 't-text'"
 )
 
-# Download each of those submissions and convert each to an EPUB e-book
+# For each text submission...
 for submission_page in $text_submission_pages
-  set downloaded_file (fa-tools download $submission_page)
-  ebook-convert $downloaded_file $downloaded_file.epub --no-default-epub-cover
+  # Retrieve submission metadata as a JSON string
+  set meta (fa-tools info $submission_page)
+
+  # Download the submission file
+  set filename (fa-tools download $submission_page)
+
+  # Convert to an EPUB e-book, using the metadata from the JSON info
+  ebook-convert $filename $filename.epub \
+    --authors (echo "$meta" | jq -r '.author') \
+    --pubdate (echo "$meta" | jq -r '.date') \
+    --title (echo "$meta" | jq -r '.title') \
+    --tags (echo "$meta" | jq -r '.tags | join(",")') \
+    --no-default-epub-cover
 end
 ```
 
