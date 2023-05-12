@@ -76,12 +76,11 @@ Cookie: [...]
 [...]
 "
 
-# Retrieve the list of submissions in a gallery folder
-fa-tools list https://www.furaffinity.net/gallery/$SOMEUSER/ > submissions.csv
-
-# Filter the CSV to keep the pages of only the text submissions
+# Retrieve the list of submissions in a gallery folder,
+# and filter it to keep the page URLs of only the text submissions
 set text_submission_pages (
-  q -d, -H "select distinct(page) from submissions.csv where kind = 't-text'"
+  fa-tools list https://www.furaffinity.net/gallery/$SOMEUSER/ |
+    q -d, -H "select distinct(page) from - where kind = 't-text'"
 )
 
 # For each text submission...
