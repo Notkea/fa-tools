@@ -30,7 +30,6 @@ dependencies:
   - http-conduit
   - conduit
   - resourcet
-  - data-default
   - scalpel
   - aeson
   - cassava
