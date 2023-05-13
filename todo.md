@@ -11,3 +11,7 @@ Patches welcome :)
 * Orphan instances for URI: the code should define its own wrapper type and
   define the instances on it, instead of relying on orphan instances on lib
   types.
+
+* Submission pages with invalid encoding (non-UTF8 characters) seem to break
+  the `fa-tools` subcommand. This seems to be due to FA embedding story
+  previews with some other encoding within pages using the utf-8 charset.
