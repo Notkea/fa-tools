@@ -19,7 +19,11 @@ instance ToJSON U.URI where
 
 canonicaliseUri :: U.URI -> T.Text -> Maybe U.URI
 canonicaliseUri baseUri relativeRef =
-  (`U.relativeTo` baseUri) <$> U.parseRelativeReference (T.unpack relativeRef)
+  (`U.relativeTo` baseUri) <$> parseEscapeRelRef (T.unpack relativeRef)
+  where
+    parseEscapeRelRef :: String -> Maybe U.URI
+    parseEscapeRelRef =
+      U.parseRelativeReference . U.escapeURIString U.isUnescapedInURI
 
 uriString :: U.URI -> String
 uriString = flip (U.uriToString id) ""
