@@ -139,10 +139,6 @@ The following issues affecting the program are known. Patches welcome.
   define the instances on it, instead of relying on orphan instances on lib
   types.
 
-* Submission pages with invalid encoding (non-UTF8 characters) seem to break
-  the `fa-tools` subcommand. This seems to be due to FA embedding story
-  previews with some other encoding within pages using the utf-8 charset.
-
 
 # LICENCE AND COPYRIGHT
 

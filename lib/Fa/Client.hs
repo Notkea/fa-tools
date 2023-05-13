@@ -6,6 +6,8 @@ module Fa.Client where
 
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
+import qualified Data.Text.Encoding.Error as T
+import qualified Data.ByteString.Lazy as LBS
 import qualified Data.CaseInsensitive as CI
 import qualified Network.URI as U
 import qualified Network.HTTP.Client as HTTP
@@ -16,7 +18,6 @@ import qualified Conduit as C
 import qualified Text.HTML.Scalpel as S
 
 import Control.Arrow ((>>>))
-import Data.Default (def)
 import Data.Maybe (mapMaybe)
 import Data.ByteString (ByteString)
 import Control.Monad.Trans.Resource (runResourceT)
@@ -60,7 +61,14 @@ fetchAndScrape :: HTTP.Manager -> S.Scraper T.Text a -> U.URI -> IO (Maybe a)
 fetchAndScrape client = flip (S.scrapeURLWithConfig scalpelCfg . uriString)
   where
     scalpelCfg :: S.Config T.Text
-    scalpelCfg = def { S.manager = Just client }
+    scalpelCfg = S.Config { S.manager = Just client, S.decoder = decoder }
+
+    -- FA pages are encoded as UTF-8, but may contain Windows-1252 story
+    -- previews. To avoid simply failing, we need the decoding to be more
+    -- lenient.
+    decoder :: S.Decoder T.Text
+    decoder =
+      T.decodeUtf8With T.lenientDecode . LBS.toStrict . HTTP.responseBody
 
 infixl 6 @.
 (@.) :: S.TagName -> String -> S.Selector
