@@ -47,7 +47,7 @@ website.
 :   Retrieve and print a submission's info as JSON.
 
     Fields are: page, download, author, date, tags, folders(name, url), title,
-    description, inlineWriting.
+    description.
 
 `fa-tools download [OPTIONS] SUBMISSION_URL`
 :   Download a submission file from the given page or direct link.

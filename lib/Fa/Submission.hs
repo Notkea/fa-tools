@@ -28,7 +28,6 @@ data Submission = Submission
   , folders :: [FolderEntry]
   , title :: T.Text
   , description :: HTML
-  , inlineWriting :: Maybe HTML  -- pre-rendered BBCode
   } deriving (Generic, Show, ToJSON)
 
 extractTags :: Scraper T.Text [T.Text]
@@ -41,19 +40,6 @@ extractFolderEntries baseUri =
     name <- text "span"  -- TODO: also get the parent folder?
     return FolderEntry { .. }
 
-extractInlineWriting :: Scraper T.Text (Maybe HTML)
-extractInlineWriting =
-  htmls (inlineWritingContainer // anySelector `atDepth` 1)
-    <&> wrapUp . drop 8  -- file info header
-  where
-    inlineWritingContainer :: Selector
-    inlineWritingContainer = "div" @. "submission-writing" // "center" // "div"
-
-    wrapUp :: [HTML] -> Maybe HTML
-    wrapUp paragraphs
-      | length paragraphs > 1 = Just (T.concat paragraphs)
-      | otherwise = Nothing  -- no preview, unsupported file type
-
 extractSubmission :: URI -> Scraper T.Text Submission
 extractSubmission page = do
   Just download <- attr "href" ("div" @. "download" // "a") <&> canonUri
@@ -63,7 +49,6 @@ extractSubmission page = do
   description <- html $ "div" @. "submission-description"
   tags <- extractTags
   folders <- extractFolderEntries page
-  inlineWriting <- extractInlineWriting
   return Submission { .. }
   where
     metaContainer :: Selector
