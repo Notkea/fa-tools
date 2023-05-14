@@ -13,11 +13,13 @@ import qualified Network.URI as U
 import qualified Network.HTTP.Client as HTTP
 import qualified Network.HTTP.Client.TLS as HTTP
 import qualified Network.HTTP.Types.Header as HTTP
+import qualified Network.HTTP.Types.Status as HTTP
 import qualified Network.HTTP.Conduit as HTTPC
 import qualified Conduit as C
 import qualified Text.HTML.Scalpel as S
 
 import Control.Arrow ((>>>))
+import Control.Exception (catch, throwIO)
 import Data.Maybe (mapMaybe)
 import Data.List (nub)
 import Data.ByteString (ByteString)
@@ -79,11 +81,23 @@ infixl 6 @#
 (@#) :: S.TagName -> String -> S.Selector
 (@#) tag idName = tag S.@: ["id" S.@= idName]
 
+simplifyHttpError :: IO () -> IO ()
+simplifyHttpError m = catch m handleErr
+  where
+    handleErr :: HTTP.HttpException -> IO ()
+    handleErr (HTTP.HttpExceptionRequest _ (HTTP.StatusCodeException res _)) =
+      fail $ formatResponseStatus $ HTTP.responseStatus res
+    handleErr x = throwIO x
+
+    formatResponseStatus :: HTTP.Status -> String
+    formatResponseStatus HTTP.Status { statusCode, statusMessage } =
+      show statusCode ++ ": " ++ show statusMessage
+
 type ByteSink = C.ConduitT ByteString C.Void (C.ResourceT IO) ()
 
 downloadStream :: HTTP.Manager -> U.URI -> ByteSink -> IO ()
-downloadStream client uri sink = do
-  request <- HTTP.parseRequest $ uriString uri
+downloadStream client uri sink = simplifyHttpError $ do
+  request <- HTTP.parseUrlThrow $ uriString uri
   runResourceT $ do
     response <- HTTPC.http request client
     C.connect (HTTPC.responseBody response) sink

@@ -136,9 +136,6 @@ The following issues affecting the program are known. Patches welcome.
 * The `list` sub-command returns the whole list only at the end, instead of
   streaming the result as it is fetched.
 
-* The `download` sub-command downloads a 404 placeholder image instead of
-  reporting an error on missing submission files.
-
 
 # LICENCE AND COPYRIGHT
 
