@@ -19,6 +19,7 @@ import qualified Text.HTML.Scalpel as S
 
 import Control.Arrow ((>>>))
 import Data.Maybe (mapMaybe)
+import Data.List (nub)
 import Data.ByteString (ByteString)
 import Control.Monad.Trans.Resource (runResourceT)
 
@@ -30,7 +31,7 @@ addingHeaders :: HTTP.RequestHeaders -> RequestModifier
 addingHeaders headers req = do
   req' <- HTTP.managerModifyRequest HTTP.tlsManagerSettings req
   return $ req' {
-    HTTP.requestHeaders = headers ++ HTTP.requestHeaders req'
+    HTTP.requestHeaders = nub $ headers ++ HTTP.requestHeaders req'
   }
 
 newHttpManagerWithSession :: HTTP.RequestHeaders -> IO HTTP.Manager
