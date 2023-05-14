@@ -133,6 +133,9 @@ The following issues affecting the program are known. Patches welcome.
   of unescaped symbols in URLs. FA seems not to escape those in file download
   URLs, which may contain characters such as square brackets.
 
+* The `list` sub-command returns the whole list only at the end, instead of
+  streaming the result as it is fetched.
+
 * Readme on github: the second paragraphs in definition lists are showing as
   code blocs on github. Should find a way to make both github and pandoc happy
   at the same time to have a proper web readme and a `man`page.
