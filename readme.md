@@ -128,11 +128,6 @@ hoogle serve --local
 
 The following issues affecting the program are known. Patches welcome.
 
-* Special characters in URLs: the `download` and `info` sub-command crashes
-  with "Non-exhaustive patterns in Just uri" or similar errors in the presence
-  of unescaped symbols in URLs. FA seems not to escape those in file download
-  URLs, which may contain characters such as square brackets.
-
 * The `list` sub-command returns the whole list only at the end, instead of
   streaming the result as it is fetched.
 
