@@ -131,6 +131,13 @@ The following issues affecting the program are known. Patches welcome.
 * The `list` sub-command returns the whole list only at the end, instead of
   streaming the result as it is fetched.
 
+* The `list` sub-command enumerates pages without any cooldown. This might be
+  necessary when enumerating a large number of pages to avoid being
+  rate-limited.
+
+* The `list` sub-command only works for galleries and scraps, but not yet for
+  listing the favourites.
+
 
 # LICENCE AND COPYRIGHT
 
