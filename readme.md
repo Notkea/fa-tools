@@ -135,7 +135,7 @@ The following issues affecting the program are known. Patches welcome.
   rate-limited.
 
 * The `list` sub-command only works for galleries and scraps, but not yet for
-  listing the favourites.
+  listing the favourites or new submissions from watched accounts.
 
 
 # LICENCE AND COPYRIGHT
