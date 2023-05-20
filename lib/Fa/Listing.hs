@@ -20,6 +20,7 @@ import Fa.Folder (FolderEntry (..))
 
 data SubmissionEntry = SubmissionEntry
   { page :: URI
+  , user :: URI
   , thumbnail :: URI
   , kind :: T.Text
   , rating :: T.Text
@@ -35,7 +36,8 @@ data ListingPageData = ListingPageData
 extractSubmissionEntries :: URI -> Scraper T.Text [SubmissionEntry]
 extractSubmissionEntries baseUri =
   chroots ("section" @# "gallery-gallery" // "figure") $ do
-    Just page <- attr "href" ("figcaption" // "a") <&> canonicaliseUri baseUri
+    [Just page, Just user] <-
+      attrs "href" ("figcaption" // "a") <&> map (canonicaliseUri baseUri)
     Just thumbnail <- attr "src" "img" <&> canonicaliseUri baseUri
     title <- attr "title" ("figcaption" // "a")
     [rating, kind] <- attr "class" "figure" <&> T.splitOn " "

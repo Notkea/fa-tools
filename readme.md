@@ -38,7 +38,7 @@ website.
 `fa-tools list [OPTIONS] LIST_PAGE_URL`
 :   Retrieve and list submissions from a gallery as CSV.
 
-    Columns are: page, thumbnail, kind, rating, title.
+    Columns are: page, user, thumbnail, kind, rating, title.
 
     `-a` `--all-folders`
     :   List items from all folders (default: false)
