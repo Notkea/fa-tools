@@ -85,7 +85,7 @@ set text_submission_pages (
 
 # For each text submission...
 for submission_page in $text_submission_pages
-  # Retrieve submission metadata, unpack JSON fields
+  # Retrieve submission metadata, unpack JSON fields into shell variables
   fa-tools info "$submission_page" |
     jq -r '.download, .author, .date, .title, (.tags | join(","))' |
     read -L download_url author pubdate title tags
@@ -93,7 +93,7 @@ for submission_page in $text_submission_pages
   # Download the submission file
   set filename (fa-tools download "$download_url")
 
-  # Convert to an EPUB e-book, using the metadata from the submission page
+  # Convert to an EPUB e-book, adding metadata from the submission page
   ebook-convert "$filename" "$filename.epub" \
     --authors "$author" \
     --pubdate "$pubdate" \
