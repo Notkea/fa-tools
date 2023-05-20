@@ -9,6 +9,7 @@ import qualified Network.HTTP.Client as HTTP
 import qualified System.IO.Error as IOE
 import qualified Fa.Submission as FAS
 
+import Control.Monad (when)
 import Fa.Client
 import Fa.Uri
 
@@ -20,7 +21,7 @@ download client url output = do
   fileUri <- getFileUri uri
   let outputPath = getOutputPath fileUri
   downloadStream client fileUri $ sinkFor outputPath
-  putStrLn outputPath
+  when (outputPath /= "-") $ putStrLn outputPath
 
   where
     getFileUri :: URI.URI -> IO URI.URI
