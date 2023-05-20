@@ -13,8 +13,9 @@ import Text.HTML.Scalpel as S
 
 import GHC.Generics (Generic)
 import Network.URI (URI)
+import Control.Applicative ((<|>))
 import Data.Functor ((<&>))
-import Fa.Client ((@.), (@#), fetchAndScrape)
+import Fa.Client ((@.), fetchAndScrape)
 import Fa.Uri (canonicaliseUri)
 import Fa.Folder (FolderEntry (..))
 
@@ -35,7 +36,7 @@ data ListingPageData = ListingPageData
 
 extractSubmissionEntries :: URI -> Scraper T.Text [SubmissionEntry]
 extractSubmissionEntries baseUri =
-  chroots ("section" @# "gallery-gallery" // "figure") $ do
+  chroots ("div" @. "section-body" // "figure") $ do
     [Just page, Just user] <-
       attrs "href" ("figcaption" // "a") <&> map (canonicaliseUri baseUri)
     Just thumbnail <- attr "src" "img" <&> canonicaliseUri baseUri
@@ -52,11 +53,21 @@ extractFolderEntries baseUri =
 
 extractNextPageUrl :: URI -> Scraper T.Text (Maybe URI)
 extractNextPageUrl baseUri =
-  fmap (lookup "Next") $
-    chroots ("div" @. "submission-list" // "form") $ do
-      label <- text "button"
-      Just target <- attr "action" "form" <&> canonicaliseUri baseUri
-      return (label, target)
+  (favsPagination <|> galleryPagination) <&> lookup "Next"
+  where
+    favsPagination :: Scraper T.Text [(T.Text, URI)]
+    favsPagination =
+      chroots ("div" @. "pagination" // "a") $ do
+        label <- text "a"
+        Just target <- attr "href" "a" <&> canonicaliseUri baseUri
+        return (label, target)
+
+    galleryPagination :: Scraper T.Text [(T.Text, URI)]
+    galleryPagination =
+      chroots ("div" @. "submission-list" // "form") $ do
+        label <- text "button"
+        Just target <- attr "action" "form" <&> canonicaliseUri baseUri
+        return (label, target)
 
 extractListingPageData :: URI -> Scraper T.Text ListingPageData
 extractListingPageData baseUri = do

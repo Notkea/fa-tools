@@ -36,7 +36,8 @@ website.
 # COMMANDS
 
 `fa-tools list [OPTIONS] LIST_PAGE_URL`
-:   Retrieve and list submissions from a gallery as CSV.
+:   Retrieve and list submissions from a gallery, scraps, or user favourites
+    as CSV.
 
     Columns are: page, user, thumbnail, kind, rating, title.
 
@@ -134,8 +135,8 @@ The following issues affecting the program are known. Patches welcome.
   necessary when enumerating a large number of pages to avoid being
   rate-limited.
 
-* The `list` sub-command only works for galleries and scraps, but not yet for
-  listing the favourites or new submissions from watched accounts.
+* The `list` sub-command only works for galleries, scraps, and user favourites,
+  but not for listing the aggregated new submissions from watched accounts.
 
 
 # LICENCE AND COPYRIGHT
