@@ -4,6 +4,7 @@
 
 module List where
 
+import qualified Conduit as C
 import qualified Network.URI as URI
 import qualified Network.HTTP.Client as HTTP
 import qualified Data.ByteString.Lazy.Char8 as LB
@@ -11,31 +12,45 @@ import qualified Data.Csv as CSV
 import qualified Fa.Folder as FAF
 import qualified Fa.Listing as FAL
 
-import Control.Arrow ((>>>))
+import Conduit ((.|))
 
 type URL = String
 
+encodeCsv ::
+  (CSV.DefaultOrdered a, CSV.ToNamedRecord a) => a -> LB.ByteString
+encodeCsv a = CSV.encodeDefaultOrderedByNameWith noHeader [a]
+  where
+    noHeader :: CSV.EncodeOptions
+    noHeader = CSV.defaultEncodeOptions {
+      CSV.encIncludeHeader = False
+    }
+
 -- TODO: rate-limit when scrapeing many pages?
--- TODO: stream output?
--- TODO: deduplicate output?
 list :: HTTP.Manager -> URL -> Bool -> IO ()
-list client url allFolders = do
-  let Just uri = URI.parseURI url
-  mainFolderPages <- scrapeFolder uri
-  otherFoldersPages <- scrapeOtherFolders $ FAL.folders $ head mainFolderPages
-  printSubmissionsCsv $ mainFolderPages ++ otherFoldersPages
+list client mainUrl allFolders = do
+  let Just uri = URI.parseURI mainUrl
+  LB.putStr headers
+  C.runConduit $
+    FAL.scrapeListingPages client uri
+    .| (if allFolders then scrapeOtherFolders else C.mapC id)
+    .| C.concatMapC FAL.submissions
+    .| C.mapM_C (LB.putStr . encodeCsv)
 
   where
-    scrapeFolder :: URI.URI -> IO [FAL.ListingPageData]
-    scrapeFolder = FAL.scrapeListingDataMultiPage client
+    headers :: LB.ByteString
+    headers = CSV.encodeDefaultOrderedByName ([] :: [FAL.SubmissionEntry])
 
-    scrapeOtherFolders :: [FAF.FolderEntry] -> IO [FAL.ListingPageData]
-    scrapeOtherFolders folderEntries
-      | allFolders = concat <$> mapM (scrapeFolder . FAF.url) folderEntries
-      | otherwise = return []
+    scrapeOtherFolders ::
+      C.ConduitT FAL.ListingPageData FAL.ListingPageData IO ()
+    scrapeOtherFolders = do
+      Just firstPageData <- C.headC
+      C.yield firstPageData
+      C.mapC id
+      C.toProducer $ scrapeFolders $ FAL.folders firstPageData
 
-    printSubmissionsCsv :: [FAL.ListingPageData] -> IO ()
-    printSubmissionsCsv =
-      concatMap FAL.submissions
-      >>> CSV.encodeDefaultOrderedByName
-      >>> LB.putStrLn
+    scrapeFolders ::
+      [FAF.FolderEntry] -> C.ConduitT () FAL.ListingPageData IO ()
+    scrapeFolders [] = mempty
+    scrapeFolders (FAF.FolderEntry { FAF.url } : others) = do
+      FAL.scrapeListingPages client url
+      scrapeFolders others

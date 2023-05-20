@@ -4,6 +4,7 @@
 
 module Fa.Listing where
 
+import qualified Conduit as C
 import qualified Network.HTTP.Client as HTTP
 import qualified Data.Text as T
 import qualified Data.Csv as CSV
@@ -62,15 +63,13 @@ extractListingPageData baseUri = do
   nextPage <- extractNextPageUrl baseUri
   return ListingPageData { .. }
 
-scrapeListingDataMultiPage :: HTTP.Manager -> URI -> IO [ListingPageData]
-scrapeListingDataMultiPage client uri = do
-  Just currentPageData <- scrapePage uri
-  nextPagesData <- scrapNextPage (nextPage currentPageData)
-  return $ currentPageData : nextPagesData
-  where
-    scrapePage :: URI -> IO (Maybe ListingPageData)
-    scrapePage page = fetchAndScrape client (extractListingPageData page) page
+scrapeListingPage :: HTTP.Manager -> URI -> IO (Maybe ListingPageData)
+scrapeListingPage client uri =
+  fetchAndScrape client (extractListingPageData uri) uri
 
-    scrapNextPage :: Maybe URI -> IO [ListingPageData]
-    scrapNextPage (Just nextPage) = scrapeListingDataMultiPage client nextPage
-    scrapNextPage Nothing = return []
+scrapeListingPages ::
+  HTTP.Manager -> URI -> C.ConduitT () ListingPageData IO ()
+scrapeListingPages client uri = do
+  Just currentPageData <- C.lift $ scrapeListingPage client uri
+  C.yield currentPageData
+  maybe mempty (scrapeListingPages client) (nextPage currentPageData)
