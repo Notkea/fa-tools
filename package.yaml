@@ -50,7 +50,7 @@ library:
   source-dirs: lib
 
 executables:
-  fa-tools:
+  fa-subs:
     main:        Fa/Subs/Main.hs
     source-dirs: app
     dependencies:

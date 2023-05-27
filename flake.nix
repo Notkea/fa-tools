@@ -19,8 +19,11 @@
     ];
 
   in rec {
-    apps.default = flake-utils.lib.mkApp {
-      drv = packages.default;
+    apps = {
+      fa-subs = flake-utils.lib.mkApp {
+        name = "fa-subs";
+        drv = packages.default;
+      };
     };
 
     packages.default = pkgs.haskell.lib.compose.overrideCabal (super: {
@@ -32,13 +35,18 @@
         ${super.postInstall or ""}
 
         # wrapper for runtime dependencies registration
-        wrapProgram "$out/bin/${super.pname}" \
-          --prefix PATH : ${pkgs.lib.makeBinPath extraPathDeps}
+        for executable in "$out/bin/"*; do
+          wrapProgram "$executable" \
+            --prefix PATH : ${pkgs.lib.makeBinPath extraPathDeps}
+        done
 
         # bash completion
-        mkdir -p "$out/share/bash-completion/completions"
-        "$out/bin/${super.pname}" --help=bash \
-          > "$out/share/bash-completion/completions/${super.pname}"
+        compl_dir="$out/share/bash-completion/completions"
+        mkdir -p "$compl_dir"
+        for executable in "$out/bin/"*; do
+          "$executable" --help=bash \
+            > "$compl_dir/$(basename "$executable")"
+        done
 
         # manual page
         mkdir -p "$out/share/man/man1"

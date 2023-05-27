@@ -72,8 +72,8 @@ optionsModes = modes
       }
       &= help "Download a submission file from the given page or direct link."
   ]
-  &= summary "A CLI toolbox to retrieve content from FurAffinity."
-  &= program "fa-tools"
+  &= summary "List and retrieve submissions from FurAffinity."
+  &= program "fa-subs"
   &= help (unlines envHelp)
   &= helpArg [explicit, name "h", name "help"]
   &= versionArg [explicit, name "version"]
