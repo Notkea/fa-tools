@@ -16,6 +16,7 @@ import Data.Functor ((<&>))
 import Fa.Folder (FolderEntry (..))
 import Fa.Client ((@.), fetchAndScrape)
 import Fa.Uri (canonicaliseUri)
+import Fa.Date (extractAbsDate)
 
 type HTML = T.Text
 
@@ -45,7 +46,7 @@ extractSubmission page = do
   Just download <- attr "href" ("div" @. "download" // "a") <&> canonUri
   title <- text $ metaContainer // "div" @. "submission-title" // "p"
   author <- text $ metaContainer // "a" // "strong"
-  date <- attr "title" $ metaContainer // "span" @. "popup_date"
+  Just date <- extractAbsDate metaContainer
   description <- html $ "div" @. "submission-description"
   tags <- extractTags
   folders <- extractFolderEntries page
