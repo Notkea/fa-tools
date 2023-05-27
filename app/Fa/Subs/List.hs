@@ -2,7 +2,7 @@
 -- Copyright 2023 Notkea
 -- Licensed under the EUPL version 1.2
 
-module List where
+module Fa.Subs.List where
 
 import qualified Conduit as C
 import qualified Network.URI as URI

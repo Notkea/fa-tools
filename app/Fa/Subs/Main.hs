@@ -6,9 +6,9 @@ import qualified Network.HTTP.Client as HTTP
 import qualified Data.Text as T
 import qualified Fa.Client as FAC
 
-import qualified Info as APP
-import qualified List as APP
-import qualified Download as APP
+import qualified Fa.Subs.Info as APP
+import qualified Fa.Subs.List as APP
+import qualified Fa.Subs.Download as APP
 
 import System.Environment (getEnv)
 import System.Console.CmdArgs

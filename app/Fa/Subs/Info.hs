@@ -2,7 +2,7 @@
 -- Copyright 2023 Notkea
 -- Licensed under the EUPL version 1.2
 
-module Info where
+module Fa.Subs.Info where
 
 import qualified Network.URI as URI
 import qualified Network.HTTP.Client as HTTP

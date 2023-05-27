@@ -51,7 +51,7 @@ library:
 
 executables:
   fa-tools:
-    main:        Main.hs
+    main:        Fa/Subs/Main.hs
     source-dirs: app
     dependencies:
       - fa-tools
