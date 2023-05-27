@@ -15,7 +15,7 @@ import GHC.Generics (Generic)
 import Network.URI (URI)
 import Control.Applicative ((<|>))
 import Data.Functor ((<&>))
-import Fa.Client ((@.), fetchAndScrape)
+import Fa.Client ((@.), fetchAndScrape, fetchAndScrapePages)
 import Fa.Uri (canonicaliseUri)
 import Fa.Folder (FolderEntry (..))
 
@@ -82,7 +82,5 @@ scrapeListingPage client uri =
 
 scrapeListingPages ::
   HTTP.Manager -> URI -> C.ConduitT () ListingPageData IO ()
-scrapeListingPages client uri = do
-  Just currentPageData <- C.lift $ scrapeListingPage client uri
-  C.yield currentPageData
-  maybe mempty (scrapeListingPages client) (nextPage currentPageData)
+scrapeListingPages client =
+  fetchAndScrapePages client extractListingPageData nextPage

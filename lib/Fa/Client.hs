@@ -73,6 +73,19 @@ fetchAndScrape client = flip (S.scrapeURLWithConfig scalpelCfg . uriString)
     decoder =
       T.decodeUtf8With T.lenientDecode . LBS.toStrict . HTTP.responseBody
 
+fetchAndScrapePages ::
+     HTTP.Manager
+  -> (U.URI -> S.Scraper T.Text a)
+  -> (a -> Maybe U.URI)
+  -> U.URI
+  -> C.ConduitT () a IO ()
+fetchAndScrapePages client scraper nextPage uri = do
+  Just currentPageData <- C.lift $ fetchAndScrape client (scraper uri) uri
+  C.yield currentPageData
+  maybe mempty
+    (fetchAndScrapePages client scraper nextPage)
+    (nextPage currentPageData)
+
 infixl 6 @.
 (@.) :: S.TagName -> String -> S.Selector
 (@.) tag className = tag S.@: [S.hasClass className]
