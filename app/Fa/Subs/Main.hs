@@ -3,29 +3,13 @@
 -- Licensed under the EUPL version 1.2
 
 import qualified Network.HTTP.Client as HTTP
-import qualified Data.Text as T
-import qualified Fa.Client as FAC
 
 import qualified Fa.Subs.Info as APP
 import qualified Fa.Subs.List as APP
 import qualified Fa.Subs.Download as APP
 
-import System.Environment (getEnv)
+import Fa.Common
 import System.Console.CmdArgs
-
-envKeyFaSessionHeaders :: String
-envKeyFaSessionHeaders = "FA_SESSION_HEADERS"
-
-envHelp :: [String]
-envHelp = map (\(key, text) -> "$" ++ key ++ ": " ++ text)
-  [ (envKeyFaSessionHeaders, "headers of an existing session")
-  ]
-
-initHttpManager :: IO HTTP.Manager
-initHttpManager = do
-  headerLines <- getEnv envKeyFaSessionHeaders
-  let headers = FAC.parseHeaderLines $ T.pack headerLines
-  FAC.newHttpManagerWithSession $ FAC.filterSessionHeaders headers
 
 type URL = String
 
