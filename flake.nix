@@ -48,11 +48,16 @@
             > "$compl_dir/$(basename "$executable")"
         done
 
-        # manual page
-        mkdir -p "$out/share/man/man1"
-        ${pkgs.pandoc}/bin/pandoc --standalone --to man \
-          readme.md \
-          --output "$out/share/man/man1/fa-tools.1"
+        # manual pages
+        for manual_source in *.?.md; do
+          page_name="$(basename "$manual_source" .md)"
+          section="''${page_name##*.}"
+          man_out_dir="$out/share/man/man$section"
+          mkdir -p "$man_out_dir"
+          ${pkgs.pandoc}/bin/pandoc --standalone --to man \
+            "$manual_source" \
+            --output "$man_out_dir/$page_name"
+        done
       '';
     }) (pkgs.haskellPackages.callCabal2nix "fa-tools" ./. { });
 
