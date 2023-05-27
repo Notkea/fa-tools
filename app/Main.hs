@@ -55,7 +55,7 @@ optionsModes = modes
           &= name "all-folders"
           &= help "List items from all folders (default: false)"
       }
-      &= help "Retrieve and list submissions from a gallery as CSV."
+      &= help "List submissions from a gallery, scraps, or user favs as CSV."
   , Info
       { url = def
           &= typ "SUBMISSION_PAGE_URL"
