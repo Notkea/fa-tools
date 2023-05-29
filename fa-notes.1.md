@@ -51,6 +51,67 @@ The following issues affecting the program are known. Patches welcome.
   interface.
 
 
+# EXAMPLE
+
+The following snippet finds new notes in the inbox and sends them via email to
+some recipient. This can act as a replacement for the missing note email
+notification feature of the site.
+
+Fish shell commands:
+
+```fish
+# Get into a shell with the fa-tools, q, jq programs
+nix shell github:Notkea/fa-tools 'nixpkgs#'{q-text-as-data,jq}
+
+# Use an existing FA user session, to extract from a web browser
+set --export FA_SESSION_HEADERS "
+User-Agent: [...]
+Cookie: [...]
+[...]
+"
+
+# List the current notes
+fa-notes list > index.new.csv
+
+# Retrieve the last known note ID, or 0 if we don't know any yet.
+set last_known_note_id (
+  q -d, -H "select max(identifier) from index.csv" || echo 0
+)
+
+# Find only the new notes
+set new_notes_ids (q -d, -H "
+  select distinct(identifier)
+  from index.new.csv
+  where identifier > $last_known_note_id
+")
+
+for id in $new_notes_ids
+  # Fetch the note's data
+  set json (fa-notes read "$id")
+
+  # Extract and format note fields
+  set sender    (echo "$json" | jq -r .sender | xargs basename)
+  set recipient (echo "$json" | jq -r .recipient | xargs basename)
+  set datetime  (echo "$json" | jq -r .date | date -f - --rfc-email)
+  set subject   (echo "$json" | jq -r .subject | head -n1)
+  set content   (echo "$json" | jq -r .content | string collect)
+
+  # Format and send the email
+  echo "\
+    From: $sender <notes.relay@not.really.furaffinity.net>
+    To: $recipient <actual.recipient@some.host>
+    Date: $datetime
+    Subject: $subject
+
+    $content
+  " | string trim | sendmail --read-recipients
+end
+
+# Save the index of now known notes for the next run
+mv index.new.csv index.csv
+```
+
+
 # SEE ALSO
 
 __fa-tools(7)__, __fa-subs(1)__
