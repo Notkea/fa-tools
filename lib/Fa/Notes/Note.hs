@@ -26,15 +26,16 @@ import Fa.Uri (uriString)
 type NoteID = Int
 
 data Note = Note
-  { sender :: URI
+  { identifier :: NoteID
+  , sender :: URI
   , recipient :: URI
   , date :: ZonedTime
   , subject :: T.Text
   , content :: T.Text
   } deriving (Generic, Show, ToJSON)
 
-extractNote :: URI -> Scraper T.Text Note
-extractNote page =
+extractNote :: NoteID -> URI -> Scraper T.Text Note
+extractNote identifier page =
   chroot ("div" @. "messagecenter-mail-note-preview-pane") $ do
     [Just sender, Just recipient] <- links page "href" (msgHeader // "a")
     Just date <- extractAbsDate msgHeader
@@ -57,7 +58,7 @@ noteUri noteId =
 scrapeNote :: HTTP.Manager -> NoteID -> IO (Maybe Note)
 scrapeNote client noteId = do
   let Just uri = noteUri noteId
-  fetchAndScrape client (extractNote uri) uri
+  fetchAndScrape client (extractNote noteId uri) uri
 
 data NoteTargetFolder = Unread | Archive | Trash
   deriving (Show, Read, Typeable, Data)
