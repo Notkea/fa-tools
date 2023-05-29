@@ -24,6 +24,10 @@
         name = "fa-subs";
         drv = packages.default;
       };
+      fa-notes = flake-utils.lib.mkApp {
+        name = "fa-notes";
+        drv = packages.default;
+      };
     };
 
     packages.default = pkgs.haskell.lib.compose.overrideCabal (super: {
