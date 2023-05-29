@@ -37,10 +37,10 @@ website.
 
 # COMMANDS
 
-`fa-subs`
+`fa-subs [list|info|download]`
 :   List and retrieve gallery submissions. See __fa-subs(1)__.
 
-`fa-notes`
+`fa-notes [list|read|move]`
 :   List, retrieve and manipulate notes. See __fa-notes(1)__.
 
 
