@@ -3,7 +3,6 @@
 *.1
 *.7
 
-__pycache__
 result
 out
 env.fish
