@@ -9,8 +9,8 @@ import qualified Network.URI as URI
 import qualified Network.HTTP.Client as HTTP
 import qualified Data.ByteString.Lazy.Char8 as LB
 import qualified Data.Csv as CSV
-import qualified Fa.Folder as FAF
-import qualified Fa.Listing as FAL
+import qualified Fa.Submissions.Folder as FAF
+import qualified Fa.Submissions.Listing as FAL
 
 import Conduit ((.|))
 

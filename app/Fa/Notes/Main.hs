@@ -10,7 +10,7 @@ import qualified Fa.Notes.List as APP
 import qualified Fa.Notes.Read as APP
 import qualified Fa.Notes.Move as APP
 
-import qualified Fa.Note as FAN
+import qualified Fa.Notes.Note as FAN
 
 import Fa.Common
 import System.Console.CmdArgs

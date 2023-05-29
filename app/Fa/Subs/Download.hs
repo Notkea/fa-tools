@@ -7,7 +7,7 @@ module Fa.Subs.Download where
 import qualified Network.URI as URI
 import qualified Network.HTTP.Client as HTTP
 import qualified System.IO.Error as IOE
-import qualified Fa.Submission as FAS
+import qualified Fa.Submissions.Submission as FAS
 
 import Control.Monad (when)
 import Fa.Client

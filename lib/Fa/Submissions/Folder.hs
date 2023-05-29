@@ -2,7 +2,7 @@
 -- Copyright 2023 Notkea
 -- Licensed under the EUPL version 1.2
 
-module Fa.Folder where
+module Fa.Submissions.Folder where
 
 import qualified Data.Text as T
 

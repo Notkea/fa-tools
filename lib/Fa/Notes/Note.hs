@@ -2,7 +2,7 @@
 -- Copyright 2023 Notkea
 -- Licensed under the EUPL version 1.2
 
-module Fa.Note where
+module Fa.Notes.Note where
 
 import qualified Network.HTTP.Client as HTTP
 import qualified Data.Text as T

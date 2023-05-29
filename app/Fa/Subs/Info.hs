@@ -8,7 +8,7 @@ import qualified Network.URI as URI
 import qualified Network.HTTP.Client as HTTP
 import qualified Data.Aeson as JSON
 import qualified Data.ByteString.Lazy.Char8 as LB
-import qualified Fa.Submission as FAS
+import qualified Fa.Submissions.Submission as FAS
 
 type URL = String
 

@@ -2,7 +2,7 @@
 -- Copyright 2023 Notkea
 -- Licensed under the EUPL version 1.2
 
-module Fa.NoteList where
+module Fa.Notes.Listing where
 
 import qualified Conduit as C
 import qualified Network.HTTP.Client as HTTP

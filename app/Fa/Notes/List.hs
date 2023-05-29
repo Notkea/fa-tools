@@ -8,7 +8,7 @@ import qualified Conduit as C
 import qualified Network.HTTP.Client as HTTP
 import qualified Data.ByteString.Lazy.Char8 as LB
 import qualified Data.Csv as CSV
-import qualified Fa.NoteList as FANL
+import qualified Fa.Notes.Listing as FANL
 
 import Conduit ((.|))
 

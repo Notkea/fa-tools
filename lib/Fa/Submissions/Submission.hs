@@ -2,7 +2,7 @@
 -- Copyright 2023 Notkea
 -- Licensed under the EUPL version 1.2
 
-module Fa.Submission where
+module Fa.Submissions.Submission where
 
 import qualified Network.HTTP.Client as HTTP
 import qualified Data.Text as T
@@ -13,7 +13,7 @@ import GHC.Generics (Generic)
 import Data.Aeson (ToJSON)
 import Network.URI (URI)
 import Data.Functor ((<&>))
-import Fa.Folder (FolderEntry (..))
+import Fa.Submissions.Folder (FolderEntry (..))
 import Fa.Client ((@.), fetchAndScrape)
 import Fa.Uri (canonicaliseUri)
 import Fa.Date (extractAbsDate)

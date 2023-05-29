@@ -7,7 +7,7 @@ module Fa.Notes.Read where
 import qualified Network.HTTP.Client as HTTP
 import qualified Data.Aeson as JSON
 import qualified Data.ByteString.Lazy.Char8 as LB
-import qualified Fa.Note as FAN
+import qualified Fa.Notes.Note as FAN
 
 type URL = String
 

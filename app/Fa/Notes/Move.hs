@@ -5,7 +5,7 @@
 module Fa.Notes.Move where
 
 import qualified Network.HTTP.Client as HTTP
-import qualified Fa.Note as FAN
+import qualified Fa.Notes.Note as FAN
 
 move :: HTTP.Manager -> Int -> FAN.NoteTargetFolder -> IO ()
 move = FAN.moveNote

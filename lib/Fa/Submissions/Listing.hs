@@ -2,7 +2,7 @@
 -- Copyright 2023 Notkea
 -- Licensed under the EUPL version 1.2
 
-module Fa.Listing where
+module Fa.Submissions.Listing where
 
 import qualified Conduit as C
 import qualified Network.HTTP.Client as HTTP
@@ -17,7 +17,7 @@ import Control.Applicative ((<|>))
 import Data.Functor ((<&>))
 import Fa.Client ((@.), fetchAndScrape, fetchAndScrapePages)
 import Fa.Uri (canonicaliseUri)
-import Fa.Folder (FolderEntry (..))
+import Fa.Submissions.Folder (FolderEntry (..))
 
 data SubmissionEntry = SubmissionEntry
   { page :: URI
