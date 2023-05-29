@@ -8,7 +8,6 @@ import qualified Network.HTTP.Client as HTTP
 
 import qualified Fa.Notes.List as APP
 import qualified Fa.Notes.Read as APP
-import qualified Fa.Notes.Move as APP
 
 import qualified Fa.Notes.Note as FAN
 
@@ -61,4 +60,4 @@ main = do
 run :: HTTP.Manager -> Options -> IO ()
 run client List = APP.list client
 run client Read { identifier } = APP.read client identifier
-run client Move { identifier, folder } = APP.move client identifier folder
+run client Move { identifier, folder } = FAN.moveNote client identifier folder
