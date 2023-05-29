@@ -17,7 +17,7 @@ import Data.Char (toLower)
 import Data.Typeable (Typeable)
 import Data.Data (Data)
 import Data.Time (ZonedTime)
-import Network.URI (URI, parseURI)
+import Network.URI (URI, parseURI, nullURI)
 import Data.Functor ((<&>))
 import Control.Applicative ((<|>))
 import Fa.Extractors ((@.), (@#), links, fetchAndScrape)
@@ -38,7 +38,7 @@ data Note = Note
 extractNote :: NoteID -> URI -> Scraper T.Text Note
 extractNote identifier page =
   chroot ("div" @. "messagecenter-mail-note-preview-pane") $ do
-    [Just sender, Just recipient] <- links page "href" (msgHeader // "a")
+    (sender, recipient) <- extractParticipants
     Just date <- extractAbsDate msgHeader
     subject <- text ("div" @. "section-header" // "h2")
 
@@ -51,6 +51,12 @@ extractNote identifier page =
   where
     msgHeader :: Selector
     msgHeader = "div" @. "addresses"
+
+    extractParticipants :: Scraper T.Text (URI, URI)
+    extractParticipants = links page "href" (msgHeader // "a") >>= \case
+      [Just sender, Just recipient] -> return (sender, recipient)
+      [Just recipient] -> return (nullURI, recipient)
+      _ -> fail "cannot match participants"
 
     stripTextReply :: T.Text -> T.Text
     stripTextReply = T.unlines . map T.strip . drop 6 . T.lines

@@ -45,6 +45,7 @@ default-extensions:
   - NamedFieldPuns
   - RecordWildCards
   - TemplateHaskell
+  - LambdaCase
 
 ghc-options:
   - -Wall
