@@ -19,6 +19,7 @@ import Data.Data (Data)
 import Data.Time (ZonedTime)
 import Network.URI (URI, parseURI)
 import Data.Functor ((<&>))
+import Control.Applicative ((<|>))
 import Fa.Extractors ((@.), (@#), links, fetchAndScrape)
 import Fa.Date (extractAbsDate)
 import Fa.Uri (uriString)
@@ -40,8 +41,12 @@ extractNote identifier page =
     [Just sender, Just recipient] <- links page "href" (msgHeader // "a")
     Just date <- extractAbsDate msgHeader
     subject <- text ("div" @. "section-header" // "h2")
+
     -- use content from the reply field to retrieve plain text instead of html
-    content <- text ("textarea" @# "JSMessage_reply") <&> stripTextReply
+    -- if available, otherwise use the html (for deleted correspondants)
+    content <- (text ("textarea" @# "JSMessage_reply") <&> stripTextReply)
+           <|> (text ("div" @. "user-submitted-links") <&> T.strip)
+
     return Note { .. }
   where
     msgHeader :: Selector
