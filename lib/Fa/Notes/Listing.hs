@@ -16,7 +16,7 @@ import Text.HTML.Scalpel as S
 import GHC.Generics (Generic)
 import Network.URI (URI)
 import Data.Functor ((<&>))
-import Fa.Client ((@.), hasMatch, link, fetchAndScrapePages)
+import Fa.Extractors ((@.), hasMatch, link, fetchAndScrapePages)
 import Fa.Uri (canonicaliseUri)
 import Fa.Date (extractAbsDate)
 

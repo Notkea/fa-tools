@@ -14,7 +14,7 @@ import Data.Aeson (ToJSON)
 import Network.URI (URI)
 import Data.Functor ((<&>))
 import Fa.Submissions.Folder (FolderEntry (..))
-import Fa.Client ((@.), fetchAndScrape)
+import Fa.Extractors ((@.), fetchAndScrape)
 import Fa.Uri (canonicaliseUri)
 import Fa.Date (extractAbsDate)
 

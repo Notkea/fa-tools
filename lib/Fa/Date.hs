@@ -10,7 +10,7 @@ import Text.HTML.Scalpel as S
 
 import Control.Applicative ((<|>))
 import Data.Functor ((<&>))
-import Fa.Client ((@.))
+import Fa.Extractors ((@.))
 
 type Date = T.Text
 

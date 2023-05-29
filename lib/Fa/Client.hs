@@ -6,8 +6,6 @@ module Fa.Client where
 
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
-import qualified Data.Text.Encoding.Error as T
-import qualified Data.ByteString.Lazy as LBS
 import qualified Data.CaseInsensitive as CI
 import qualified Network.URI as U
 import qualified Network.HTTP.Client as HTTP
@@ -16,17 +14,14 @@ import qualified Network.HTTP.Types.Header as HTTP
 import qualified Network.HTTP.Types.Status as HTTP
 import qualified Network.HTTP.Conduit as HTTPC
 import qualified Conduit as C
-import qualified Text.HTML.Scalpel as S
 
 import Control.Arrow ((>>>))
-import Data.Functor ((<&>))
 import Control.Exception (catch, throwIO)
 import Data.Maybe (mapMaybe)
 import Data.List (nub)
 import Data.ByteString (ByteString)
 import Control.Monad.Trans.Resource (runResourceT)
-
-import Fa.Uri
+import Fa.Uri (uriString)
 
 type RequestModifier = HTTP.Request -> IO HTTP.Request
 
@@ -60,49 +55,6 @@ parseHeaderLines = T.lines >>> map unpackEntry >>> mapMaybe toHeader
     toHeader :: [ByteString] -> Maybe HTTP.Header
     toHeader [key, val] = Just (CI.mk key, val)
     toHeader _ = Nothing
-
-fetchAndScrape :: HTTP.Manager -> S.Scraper T.Text a -> U.URI -> IO (Maybe a)
-fetchAndScrape client = flip (S.scrapeURLWithConfig scalpelCfg . uriString)
-  where
-    scalpelCfg :: S.Config T.Text
-    scalpelCfg = S.Config { S.manager = Just client, S.decoder = decoder }
-
-    -- FA pages are encoded as UTF-8, but may contain Windows-1252 story
-    -- previews. To avoid simply failing, we need the decoding to be more
-    -- lenient.
-    decoder :: S.Decoder T.Text
-    decoder =
-      T.decodeUtf8With T.lenientDecode . LBS.toStrict . HTTP.responseBody
-
-fetchAndScrapePages ::
-     HTTP.Manager
-  -> (U.URI -> S.Scraper T.Text a)
-  -> (a -> Maybe U.URI)
-  -> U.URI
-  -> C.ConduitT () a IO ()
-fetchAndScrapePages client scraper nextPage uri = do
-  Just currentPageData <- C.lift $ fetchAndScrape client (scraper uri) uri
-  C.yield currentPageData
-  maybe mempty
-    (fetchAndScrapePages client scraper nextPage)
-    (nextPage currentPageData)
-
-infixl 6 @.
-(@.) :: S.TagName -> String -> S.Selector
-(@.) tag className = tag S.@: [S.hasClass className]
-
-infixl 6 @#
-(@#) :: S.TagName -> String -> S.Selector
-(@#) tag idName = tag S.@: ["id" S.@= idName]
-
-link :: U.URI -> String -> S.Selector -> S.Scraper T.Text (Maybe U.URI)
-link baseUri attr sel = S.attr attr sel <&> canonicaliseUri baseUri
-
-links :: U.URI -> String -> S.Selector -> S.Scraper T.Text [Maybe U.URI]
-links baseUri attr sel = S.attrs attr sel <&> map (canonicaliseUri baseUri)
-
-hasMatch :: S.Selector -> S.Scraper T.Text Bool
-hasMatch sel = S.htmls sel <&> not . null
 
 simplifyHttpError :: IO () -> IO ()
 simplifyHttpError m = catch m handleErr

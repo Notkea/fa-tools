@@ -18,7 +18,7 @@ import Data.Typeable (Typeable)
 import Data.Data (Data)
 import Network.URI (URI, parseURI)
 import Data.Functor ((<&>))
-import Fa.Client ((@.), (@#), links, fetchAndScrape)
+import Fa.Extractors ((@.), (@#), links, fetchAndScrape)
 import Fa.Date (extractAbsDate)
 import Fa.Uri (uriString)
 

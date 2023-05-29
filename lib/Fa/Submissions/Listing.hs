@@ -15,7 +15,7 @@ import GHC.Generics (Generic)
 import Network.URI (URI)
 import Control.Applicative ((<|>))
 import Data.Functor ((<&>))
-import Fa.Client ((@.), fetchAndScrape, fetchAndScrapePages)
+import Fa.Extractors ((@.), fetchAndScrape, fetchAndScrapePages)
 import Fa.Uri (canonicaliseUri)
 import Fa.Submissions.Folder (FolderEntry (..))
 
