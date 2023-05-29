@@ -98,6 +98,9 @@ end
 
 The following issues affecting the program are known. Patches welcome.
 
+* The program requires the session headers environment variable to be set even
+  for guest sessions (not using an account). This should be relaxed.
+
 * The `list` action enumerates pages without any cooldown. This might be
   necessary when enumerating a large number of pages to avoid being
   rate-limited.
