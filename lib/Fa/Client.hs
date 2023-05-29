@@ -19,6 +19,7 @@ import qualified Conduit as C
 import qualified Text.HTML.Scalpel as S
 
 import Control.Arrow ((>>>))
+import Data.Functor ((<&>))
 import Control.Exception (catch, throwIO)
 import Data.Maybe (mapMaybe)
 import Data.List (nub)
@@ -93,6 +94,15 @@ infixl 6 @.
 infixl 6 @#
 (@#) :: S.TagName -> String -> S.Selector
 (@#) tag idName = tag S.@: ["id" S.@= idName]
+
+link :: U.URI -> String -> S.Selector -> S.Scraper T.Text (Maybe U.URI)
+link baseUri attr sel = S.attr attr sel <&> canonicaliseUri baseUri
+
+links :: U.URI -> String -> S.Selector -> S.Scraper T.Text [Maybe U.URI]
+links baseUri attr sel = S.attrs attr sel <&> map (canonicaliseUri baseUri)
+
+hasMatch :: S.Selector -> S.Scraper T.Text Bool
+hasMatch sel = S.htmls sel <&> not . null
 
 simplifyHttpError :: IO () -> IO ()
 simplifyHttpError m = catch m handleErr

@@ -42,6 +42,7 @@ default-extensions:
   - DeriveAnyClass
   - NamedFieldPuns
   - RecordWildCards
+  - TemplateHaskell
 
 ghc-options:
   - -Wall
@@ -56,6 +57,18 @@ executables:
     dependencies:
       - fa-tools
     ghc-options:
+      - -main-is Fa.Subs.Main
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+
+  fa-notes:
+    main:        Fa/Notes/Main.hs
+    source-dirs: app
+    dependencies:
+      - fa-tools
+    ghc-options:
+      - -main-is Fa.Notes.Main
       - -threaded
       - -rtsopts
       - -with-rtsopts=-N

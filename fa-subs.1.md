@@ -1,5 +1,7 @@
 ---
 title: FA-SUBS(1) fa-tools
+section: 1
+header: fa-tools
 date: 2023-05
 ---
 
@@ -106,7 +108,7 @@ The following issues affecting the program are known. Patches welcome.
 
 # SEE ALSO
 
-__fa-tools(7)__
+__fa-tools(7)__, __fa-notes(1)__
 
 
 # LICENCE AND COPYRIGHT

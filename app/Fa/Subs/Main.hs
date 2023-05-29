@@ -2,6 +2,8 @@
 -- Copyright 2023 Notkea
 -- Licensed under the EUPL version 1.2
 
+module Fa.Subs.Main where
+
 import qualified Network.HTTP.Client as HTTP
 
 import qualified Fa.Subs.Info as APP

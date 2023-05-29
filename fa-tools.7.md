@@ -1,5 +1,7 @@
 ---
 title: FA-TOOLS(7) fa-tools
+section: 7
+header: fa-tools
 date: 2023-05
 ---
 
@@ -38,6 +40,9 @@ website.
 `fa-subs`
 :   List and retrieve gallery submissions. See __fa-subs(1)__.
 
+`fa-notes`
+:   List, retrieve and manipulate notes. See __fa-notes(1)__.
+
 
 # DEVELOPMENT
 
@@ -64,7 +69,7 @@ hoogle serve --local
 
 # SEE ALSO
 
-__fa-subs(1)__
+__fa-subs(1)__, __fa-notes(1)__
 
 
 # LICENCE AND COPYRIGHT
