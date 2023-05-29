@@ -16,6 +16,7 @@ import Data.ByteString (ByteString)
 import Data.Char (toLower)
 import Data.Typeable (Typeable)
 import Data.Data (Data)
+import Data.Time (ZonedTime)
 import Network.URI (URI, parseURI)
 import Data.Functor ((<&>))
 import Fa.Extractors ((@.), (@#), links, fetchAndScrape)
@@ -27,7 +28,7 @@ type NoteID = Int
 data Note = Note
   { sender :: URI
   , recipient :: URI
-  , date :: T.Text
+  , date :: ZonedTime
   , subject :: T.Text
   , content :: T.Text
   } deriving (Generic, Show, ToJSON)

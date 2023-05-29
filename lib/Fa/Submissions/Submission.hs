@@ -13,6 +13,7 @@ import GHC.Generics (Generic)
 import Data.Aeson (ToJSON)
 import Network.URI (URI)
 import Data.Functor ((<&>))
+import Data.Time (ZonedTime)
 import Fa.Submissions.Folder (FolderEntry (..))
 import Fa.Extractors ((@.), fetchAndScrape)
 import Fa.Uri (canonicaliseUri)
@@ -24,7 +25,7 @@ data Submission = Submission
   { page :: URI
   , download :: URI
   , author :: T.Text
-  , date :: T.Text
+  , date :: ZonedTime
   , tags :: [T.Text]
   , folders :: [FolderEntry]
   , title :: T.Text

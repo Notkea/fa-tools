@@ -16,6 +16,7 @@ import Text.HTML.Scalpel as S
 import GHC.Generics (Generic)
 import Network.URI (URI)
 import Data.Functor ((<&>))
+import Data.Time (ZonedTime)
 import Fa.Extractors ((@.), hasMatch, link, fetchAndScrapePages)
 import Fa.Uri (canonicaliseUri)
 import Fa.Date (extractAbsDate)
@@ -29,7 +30,7 @@ data NoteEntry = NoteEntry
   -- Use their numeric identifier instead.
   { identifier :: Int
   , sender :: URI
-  , date :: T.Text
+  , date :: ZonedTime
   , unread :: Bool
   , subject :: T.Text
   } deriving (Generic, Show, CSV.ToNamedRecord, CSV.DefaultOrdered)

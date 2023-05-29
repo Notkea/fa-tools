@@ -34,6 +34,8 @@ dependencies:
   - scalpel
   - aeson
   - cassava
+  - time
+  - regex-tdfa
 
 default-extensions:
   - OverloadedStrings
