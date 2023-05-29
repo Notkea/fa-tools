@@ -15,8 +15,6 @@
   flake-utils.lib.eachDefaultSystem (system: let
     pkgs = import nixpkgs { inherit system; };
     cabalDeps = drv: with pkgs.lib; concatLists (attrValues drv.getCabalDeps);
-    extraPathDeps = with pkgs; [
-    ];
 
   in rec {
     apps = {
@@ -37,12 +35,6 @@
 
       postInstall = ''
         ${super.postInstall or ""}
-
-        # wrapper for runtime dependencies registration
-        for executable in "$out/bin/"*; do
-          wrapProgram "$executable" \
-            --prefix PATH : ${pkgs.lib.makeBinPath extraPathDeps}
-        done
 
         # bash completion
         compl_dir="$out/share/bash-completion/completions"
@@ -74,7 +66,7 @@
           apply-refact
           pandoc
         ] ++ (cabalDeps packages.default)))
-      ] ++ extraPathDeps;
+      ];
     };
   });
 }
