@@ -46,6 +46,9 @@ The following issues affecting the program are known. Patches welcome.
 
 * Only the notes from the main folder are listed.
 * Note priorities are not handled.
+* The subject returned by `fa-notes read` always contains the prefix "RE:",
+  regardless of whether it is an actual reply. This is as displayed by FA's
+  interface.
 
 
 # SEE ALSO
