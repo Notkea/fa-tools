@@ -9,8 +9,6 @@ import qualified Data.Aeson as JSON
 import qualified Data.ByteString.Lazy.Char8 as LB
 import qualified Fa.Notes.Note as FAN
 
-type URL = String
-
 read :: HTTP.Manager -> Int -> IO ()
 read client identifier = do
   Just note <- FAN.scrapeNote client identifier
