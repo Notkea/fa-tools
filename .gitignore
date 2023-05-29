@@ -1,6 +1,7 @@
 /*.cabal
 /dist*
 *.1
+*.7
 
 __pycache__
 result
