@@ -14,8 +14,9 @@ import qualified Network.URI.Static as U
 import Text.HTML.Scalpel as S
 
 import GHC.Generics (Generic)
-import Network.URI (URI)
+import Network.URI (URI, nullURI)
 import Data.Functor ((<&>))
+import Control.Applicative ((<|>))
 import Data.Time (ZonedTime)
 import Fa.Extractors ((@.), hasMatch, link, fetchAndScrapePages)
 import Fa.Uri (canonicaliseUri)
@@ -44,7 +45,9 @@ extractNoteEntries :: URI -> Scraper T.Text [NoteEntry]
 extractNoteEntries baseUri =
   chroots ("div" @. "message-center-pms-note-list-view") $ do
     Right (identifier, _) <- attr "value" "input" <&> T.decimal
-    Just sender <- link baseUri "href" ("div" @. "note-list-sender" // "a")
+    Just sender <-
+      link baseUri "href" ("div" @. "note-list-sender" // "a")
+      <|> return (Just nullURI)
     Just date <- extractAbsDate ("div" @. "note-list-senddate")
     unread <- hasMatch ("a" @. "note-unread")
     subject <- text ("div" @. "note-list-subject") <&> T.strip
