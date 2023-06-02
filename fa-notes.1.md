@@ -87,7 +87,7 @@ set new_notes_ids (q -d, -H "
 
 for id in $new_notes_ids
   # Fetch the note's data
-  set json (fa-notes read "$id")
+  set json (fa-notes read $id)
 
   # Extract and format note fields
   set sender    (echo "$json" | jq -r .sender | xargs basename)
