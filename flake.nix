@@ -29,10 +29,6 @@
     };
 
     packages.default = pkgs.haskell.lib.compose.overrideCabal (super: {
-      buildTools = (super.buildTools or []) ++ (with pkgs; [
-        makeWrapper
-      ]);
-
       postInstall = ''
         ${super.postInstall or ""}
 
