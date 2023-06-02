@@ -98,7 +98,8 @@ for id in $new_notes_ids
 
   # Format and send the email
   echo "\
-    From: $sender <notes.relay@not.really.furaffinity.net>
+    Content-Type: text/plain; charset="utf-8"
+    From: $sender on FurAffinity.net <notes.relay@not.really.furaffinity.net>
     To: $recipient <actual.recipient@some.host>
     Date: $datetime
     Subject: $subject
