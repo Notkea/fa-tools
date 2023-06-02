@@ -6,7 +6,7 @@
   description = "A collection of tools to download content from FurAffinity.";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
     flake-utils.url = "github:numtide/flake-utils";
     flaky-utils.url = "git+https://cgit.pacien.net/libs/flaky-utils";
   };
