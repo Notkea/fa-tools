@@ -70,19 +70,15 @@ Cookie: [...]
 [...]
 "
 
-# List the current notes
-fa-notes list > index.new.csv
+# Retrieve the last sent note ID, or 0 if we don't know any yet
+set last_sent_id (cat last_sent_id.txt || echo 0)
 
-# Retrieve the last known note ID, or 0 if we don't know any yet.
-set last_known_note_id (
-  q -d, -H "select max(identifier) from index.csv" || echo 0
-)
-
-# Find only the new notes
-set new_notes_ids (q -d, -H "
+# List the current notes and keep only the new IDs
+set new_notes_ids (fa-notes list | q -d, -H "
   select distinct(identifier)
-  from index.new.csv
-  where identifier > $last_known_note_id
+  from -
+  where identifier > $last_sent_id
+  order by identifier asc
 ")
 
 for id in $new_notes_ids
@@ -106,10 +102,10 @@ for id in $new_notes_ids
 
     $content
   " | string trim | sendmail --read-recipients
-end
 
-# Save the index of now known notes for the next run
-mv index.new.csv index.csv
+  # Save the note ID, so that we do not send it again next time
+  echo $id > last_sent_id.txt
+end
 ```
 
 
